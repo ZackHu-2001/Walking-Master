@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, StyleSheet, ImageBackground } from "react-native"
 
-const Tile = ({ imgUrl, visited }) => {
+const Tile = ({ imgUrl, visited, width }) => {
 
     const onPress = () => {
         console.log('Tile pressed');
@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 10,
-        margin: 10
     },
     visited: {
         borderColor: 'red',
