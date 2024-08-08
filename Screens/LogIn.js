@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { auth, db } from "../Firebase/FirebaseSetup";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { CommonActions } from '@react-navigation/native';
 
 const LogIn = ({ navigation }) => {
   const [identifier, setIdentifier] = React.useState("");
@@ -30,6 +31,19 @@ const LogIn = ({ navigation }) => {
 
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "User logged in successfully");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MainTabs',
+              state: {
+                routes: [{ name: 'Profile' }],
+              },
+            },
+          ],
+        })
+      );
     } catch (error) {
       Alert.alert("Error", error.message);
     }
