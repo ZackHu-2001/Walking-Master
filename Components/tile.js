@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, StyleSheet, ImageBackground } from "react-native"
 
-const Tile = ({ imgUrl, visited, width }) => {
+const Tile = ({ imgUrl, visited }) => {
 
     const onPress = () => {
         console.log('Tile pressed');
