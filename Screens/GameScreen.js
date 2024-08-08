@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
   const [tiles, setTiles] = useState([]);
+  const [currentTile, setCurrentTile] = useState(null);
   const route = useRoute();
   const { gameId } = route.params;
   const [visible, setVisible] = useState(false);
@@ -63,6 +64,7 @@ const GameScreen = ({ navigation }) => {
     if (!result.cancelled) {
       setImageUri(result.uri);
     }
+    tiles
   };
 
   const handleTakePhoto = async () => {
@@ -92,7 +94,9 @@ const GameScreen = ({ navigation }) => {
       { cancelable: true }
     );
   };
-  
+
+  let overallIndex = 0;
+
   return (
     <View style={styles.container}>
       <Portal>
@@ -102,8 +106,8 @@ const GameScreen = ({ navigation }) => {
               <IconButton
                 onPress={handleButtonPress}
                 icon="plus"
-                color={'#000'} // You can change the color to whatever you prefer
-                size={60} // You can adjust the size to fit your needs
+                color={'#000'}
+                size={60}
                 style={{ width: 120, height: 120, backgroundColor: '#898989' }}
               />
             </TouchableOpacity>
@@ -119,7 +123,11 @@ const GameScreen = ({ navigation }) => {
               return <View key={index} style={styles.tilesRow}>
                 {
                   row['cells'].map((tile, index) => {
-                    return <Tile key={index} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={showModal} />
+                    overallIndex++;
+                    return <Tile key={index} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
+                      showModal()
+                      setCurrentTile(overallIndex-1)
+                    }} />
                   })
                 }
               </View>

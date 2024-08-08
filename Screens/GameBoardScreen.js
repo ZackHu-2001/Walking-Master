@@ -2,8 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import GameCard from '../Components/GameCard';
 import { getGames, getUser, listenForGames } from '../Firebase/firestoreHelper';
-import Context from '../Context/context';
-// import naviga
+
 export default function GameBoardScreen({ navigation }) {
   const [games, setGames] = useState([]);
 

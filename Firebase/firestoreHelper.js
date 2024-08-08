@@ -21,6 +21,10 @@ export const getGameInfo = async (id) => {
   return gameData;
 }
 
+export const updateGame = async (id, game) => {
+  return await updateDoc(doc(db, "games", id), game);
+}
+
 export const listenForGames = (callback) => {
   const gamesCollection = collection(db, 'games');
 
@@ -49,6 +53,10 @@ export const getComment = async (id) => {
       return doc.data();
     }
   });
+}
+
+export const updateComment = async (id, comment) => {
+  return await updateDoc(doc(db, "comments", id), comment);
 }
 
 export const addComment = async (comment) => {
