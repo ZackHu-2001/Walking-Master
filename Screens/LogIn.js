@@ -4,14 +4,10 @@ import { auth, db } from "../Firebase/FirebaseSetup";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { CommonActions } from '@react-navigation/native';
-import { useContext } from "react";
-import { Context } from "../Context/context";
 
 const LogIn = ({ navigation }) => {
   const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const context = useContext(Context);
-  const { setUser } = context;
 
   const handleLogIn = async () => {
     if (!identifier || !password) {
@@ -32,9 +28,6 @@ const LogIn = ({ navigation }) => {
           return;
         }
       }
-
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setUser(userCredential.user.uid);
 
       Alert.alert("Success", "User logged in successfully");
       navigation.dispatch(

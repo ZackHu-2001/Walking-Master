@@ -25,4 +25,4 @@ const auth = initializeAuth(app, {
 });
 const storage = getStorage(app);
 
-export { app, db, auth}
+export { app, db, auth, storage }
