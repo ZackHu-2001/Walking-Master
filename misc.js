@@ -42,7 +42,7 @@ export const imgNames = [
   "扫黄.png",
   "抱抱.png",
   "拼写错误.png",
-  "挖蛋.png",
+  "捣蛋.png",
   "排长队.png",
   "探险.png",
   "放晴.png",
