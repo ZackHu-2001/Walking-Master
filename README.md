@@ -12,6 +12,9 @@ Hanzhang Peng, Zixiang Hu
 - login/signup/logout
 - create new game
 
+### Data Model & Collection
+
+
 
 ### Working on:
 
