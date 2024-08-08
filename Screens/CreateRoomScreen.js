@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import { addGame } from '../Firebase/firestoreHelper';
-import { Context } from '../Context/context';
+import Context from '../Context/context';
 
 const CreateRoomScreen = () => {
-  // const context = useContext(Context);
-  // const { userId } = context;
+  const context = useContext(Context);
+  const { userId } = context;
 
   const createNewGame = async (size, bgImgUrl) => {
     game = {
       timeStamp: Date.now(),
-      creater: null,
+      creater: userId,
       size: size,
       bgImgUrl: bgImgUrl,
       tiles: [],
