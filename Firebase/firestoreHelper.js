@@ -46,6 +46,10 @@ export const addGame = async (game) => {
   }
 }
 
+export const deleteGame = async (id) => {
+  return await deleteDoc(doc(db, "games", id));
+}
+
 export const getComment = async (id) => {
   const querySnapshot = await getDocs(collection(db, "comments"));
   querySnapshot.forEach((doc) => {
