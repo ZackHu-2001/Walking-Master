@@ -1,54 +1,66 @@
 import { useEffect, useState } from "react";
-import { View, ImageBackground, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { getGameInfo } from "../Firebase/firestoreHelper";
-import { Dimensions } from "react-native";
 import Tile from "../Components/Tile";
 import FloatingActionButton from "../Components/FloatingActionButton";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { storage } from "../Firebase/FirebaseSetup";
 import { useRoute } from "@react-navigation/native";
+import { Portal, Modal, Button, IconButton } from "react-native-paper";
+import { Dimensions } from "react-native";
 
-const GameScreen = () => {
+const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
   const [tiles, setTiles] = useState([]);
-  // const [dimensions, setDimensions] = useState(Dimensions.get('window'));
-  // const [bgImgUrl, setBgImgUrl] = useState(null);
-
   const route = useRoute();
   const { gameId } = route.params;
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   useEffect(() => {
-
-    (async () => {
+    const fetchGameInfo = async () => {
       const gameInfo = await getGameInfo(gameId);
-      console.log(gameInfo.tiles)
+      navigation.setOptions({ title: gameInfo?.name });
       setTiles(gameInfo.tiles);
-
-      console.log(gameInfo);
       setGameInfo(gameInfo);
-    })();
+    }
+
+    fetchGameInfo();
   }, []);
+
 
   return (
     <View style={styles.container}>
-      {/* <ImageBackground source={{ uri: bgImgUrl }} style={styles.bgImg} /> */}
+      <Portal>
+        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
+          <View style={{ width: Dimensions.get('window').width - 20, }}>
+            <TouchableOpacity >
+              <IconButton
+                icon="plus"
+                color={'#000'} // You can change the color to whatever you prefer
+                size={60} // You can adjust the size to fit your needs
+                style={{width: 120, height: 120, backgroundColor: '#898989'}}
+              />
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </Portal>
 
       {
         gameInfo &&
-          <View style={styles.tilesContainer}>
-            {
-              tiles.map((row, index) => {
-                <View key={index} style={styles.tilesRow}>
-                  {
-                    row['cells'].map((tile, index) => {
-                      // return <View style={{backgroundColor: 'red', width: 100, height: 100}}></View>
-                      return <Tile key={index} imgUrl={tile.photos[0] ? tile.photos[0] : tile.bgImgUrl} visited={tile.visited}/>
-                    })
-                  }
-                </View>
-              })
-            }
-          </View>
+        <View style={styles.tilesContainer}>
+          {
+            tiles.map((row, index) => {
+              return <View key={index} style={styles.tilesRow}>
+                {
+                  row['cells'].map((tile, index) => {
+                    return <Tile key={index} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={showModal} />
+                  })
+                }
+              </View>
+            })
+          }
+        </View>
       }
       {/* <FloatingActionButton /> */}
     </View>
@@ -69,13 +81,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'wrap',
     gap: 25,
-    justifyContent: 'center',
+    transform: [{ translateY: Dimensions.get('window').height / 6 }],
+    // justifyContent: 'center',
     alignItems: 'center'
   },
   tilesRow: {
-    backgroundColor: 'red',
+    width: '100%',
     flexDirection: 'row',
-    gap: 25
+    justifyContent: 'space-around'
   }
 });
 

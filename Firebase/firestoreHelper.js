@@ -1,5 +1,5 @@
 import { db } from "./FirebaseSetup";
-import { collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { onSnapshot, collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 
 export const getGames = async () => {
   const querySnapshot = await getDocs(collection(db, "games"));
@@ -20,6 +20,18 @@ export const getGameInfo = async (id) => {
   });
   return gameData;
 }
+
+export const listenForGames = (callback) => {
+  const gamesCollection = collection(db, 'games');
+
+  return onSnapshot(gamesCollection, (snapshot) => {
+    const games = [];
+    snapshot.forEach((doc) => {
+      games.push({ id: doc.id, ...doc.data() });
+    });
+    callback(games);
+  });
+};
 
 export const addGame = async (game) => {
   try {

@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { View, Button, StyleSheet, Text, TextInput } from 'react-native';
+import { View, Button, StyleSheet, Text, TextInput, Alert } from 'react-native';
 import { addGame, getUser } from '../Firebase/firestoreHelper';
 import Context from '../Context/context';
 import { imgNames, baseURL } from '../misc';
 import { RadioButton } from 'react-native-paper';
+import { storage } from '../Firebase/FirebaseSetup';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const CreateRoomScreen = ({ navigation }) => {
   const context = useContext(Context);
@@ -27,8 +29,9 @@ const CreateRoomScreen = ({ navigation }) => {
       timeStamp: Date.now(),
       creater: userId,
       size: size,
-      bgImgRef: bgImgUrl,
+      bgImgUrl: null,
       tiles: [],
+      name: gameName,
     }
 
     const exist = new Set();
@@ -37,22 +40,27 @@ const CreateRoomScreen = ({ navigation }) => {
         cells: []
       };
       for (let j = 0; j < size; j++) {
-        let idx = Math.random() * imgNames.length;
+        let idx = Math.floor(Math.random() * imgNames.length);
         while (exist.has(idx)) {
           idx = Math.random() * imgNames.length;
         }
-
+        const imgUrl = await getImgUrl(baseURL + imgNames[idx]);
         row.cells.push({
           photos: [],
           visited: false,
-          bgImgRef: baseURL + imgNames[idx]
+          bgImgUrl: imgUrl
         });
       }
       game.tiles.push(row);
     }
-
     const gameId = await addGame(game);
     navigation.navigate('Game', { gameId: gameId });
+  }
+
+  const getImgUrl = async (imgRef) => {
+    const storageRef = ref(storage, imgRef);
+    const url = await getDownloadURL(storageRef);
+    return url;
   }
 
   return (
@@ -69,12 +77,12 @@ const CreateRoomScreen = ({ navigation }) => {
       <View style={styles.radioContainer}>
         <RadioButton.Group onValueChange={value => setBoardSize(value)} value={boardSize}>
           <View style={styles.radioButton}>
-            <RadioButton value="Small" />
-            <Text>Small</Text>
+            <RadioButton value="3" />
+            <Text>3 X 3</Text>
           </View>
           <View style={styles.radioButton}>
-            <RadioButton value="Large" />
-            <Text>Large</Text>
+            <RadioButton value="4" />
+            <Text>4 X 4</Text>
           </View>
         </RadioButton.Group>
       </View>
