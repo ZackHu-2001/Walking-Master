@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import { addGame } from '../Firebase/firestoreHelper';
 import Context from '../Context/context';
+import { imgNames, baseURL } from '../misc';
 
 const CreateRoomScreen = () => {
   const context = useContext(Context);
@@ -12,19 +13,25 @@ const CreateRoomScreen = () => {
       timeStamp: Date.now(),
       creater: userId,
       size: size,
-      bgImgUrl: bgImgUrl,
+      bgImgRef: bgImgUrl,
       tiles: [],
     }
 
+    const exist = new Set();
     for (let i = 0; i < size; i++) {
       const row = {
         cells: []
       };
       for (let j = 0; j < size; j++) {
+        let idx = Math.random() * imgNames.length;
+        while (exist.has(idx)) {
+          idx = Math.random() * imgNames.length;
+        }
+
         row.cells.push({
           photos: [],
           visited: false,
-          bgImgUrl: bgImgUrl
+          bgImgRef: baseURL + imgNames[idx]
         });
       }
       game.tiles.push(row);
