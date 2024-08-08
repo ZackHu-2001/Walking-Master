@@ -2,11 +2,6 @@ import { useEffect } from "react";
 import { TouchableOpacity, View, StyleSheet, ImageBackground } from "react-native"
 
 const Tile = ({ imgUrl, visited, onPress }) => {
-
-    useEffect(() => {
-        console.log(imgUrl)
-    }, [])
-
     return (
         <TouchableOpacity onPress={onPress} style={[styles.Tile, visited && styles.visited]}>
             <ImageBackground source={{
