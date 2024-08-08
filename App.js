@@ -9,6 +9,7 @@ import { PaperProvider } from 'react-native-paper';
 import SignUp from './Screens/SignUp';
 import LogIn from './Screens/LogIn';
 import { ContextProvider } from './Context/context';
+import GameScreen from './Screens/GameScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen name="MainTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
             <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
+            <Stack.Screen name="Game" component={GameScreen} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="LogIn" component={LogIn} />
           </Stack.Navigator>

@@ -3,8 +3,14 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { auth, db } from "../Firebase/FirebaseSetup";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
+import { useContext } from "react";
+import { Context } from "../Context/context";
 
 const SignUp = ({ navigation }) => {
+
+  const context = useContext(Context);
+  const { setUserId } = context;
+
   const [email, setEmail] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -34,6 +40,8 @@ const SignUp = ({ navigation }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      setUserId(user.uid);
 
       // Store the username in Firestore
       await setDoc(doc(db, "users", user.uid), {

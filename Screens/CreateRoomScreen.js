@@ -31,6 +31,7 @@ const CreateRoomScreen = () => {
     }
 
     const gameId = await addGame(game);
+    // navigator.
     return gameId
   }
 

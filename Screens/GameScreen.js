@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, ImageBackground, Image, StyleSheet } from "react-native";
 import { getGameInfo } from "../Firebase/firestoreHelper";
 import { Dimensions } from "react-native";
-import Tile from "../Components/tile";
+import Tile from "../Components/Tile";
 import FloatingActionButton from "../Components/FloatingActionButton";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
