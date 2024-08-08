@@ -1,9 +1,30 @@
-import { View } from "react-native"
+import { TouchableOpacity, View, StyleSheet, ImageBackground } from "react-native"
 
-const tile = () => {
+const Tile = ({ imgUrl, visited, width }) => {
+
+    const onPress = () => {
+        console.log('Tile pressed');
+    }
+
     return (
-        <View>
-            <h1>Tile</h1>
-        </View>
+        <TouchableOpacity onPress={onPress} style={[styles.Tile, visited && styles.visited]}>
+            <ImageBackground source={{
+                uri: imgUrl
+            }} style={styles.Tile} />
+        </TouchableOpacity>
     )
 }
+
+const styles = StyleSheet.create({
+    Tile: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+    },
+    visited: {
+        borderColor: 'red',
+        borderWidth: 2
+    }
+})
+
+export default Tile;

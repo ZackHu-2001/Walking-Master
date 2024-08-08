@@ -1,39 +1,41 @@
-import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs, query, where } from 'firebase/firestore';
-import { db, auth } from './FirebaseSetup';
+import { db } from "./FirebaseSetup";
+import { collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 
-export async function writeToDB(data, collectionName) {
-    const updatedData = { ...data, owner: auth.currentUser.uid };
-    try {
-        await addDoc(collection(db, collectionName), updatedData);
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-export async function deleteFromDB(docId, collectionName) {
-    try {
-        await deleteDoc(doc(db, collectionName, docId));
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-export async function updateDetails(docId, collectionName, data) {
-    try {
-        await updateDoc(doc(db, collectionName, docId), data);
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-export async function readAllDocs(collectionName){
-    try {
-        const querySnapshot = await getDocs(collection(db, collectionName));
-        let newArray = [];
-        querySnapshot.forEach((doc) => {
-            newArray.push({ ...doc.data(), id: docSnapShot.id });
-        });}
-        catch(err){
-            console.error(err);
+export const getGameInfo = async (id) => {
+    const querySnapshot = await getDocs(collection(db, "games"));
+    querySnapshot.forEach((doc) => {
+        if (doc.id === id) {
+            return doc.data();
         }
+    });
+}
+
+export const addGame = async (game) => {
+    return await addDoc(collection(db, "games"), game);
+}
+
+export const getComment = async (id) => {
+    const querySnapshot = await getDocs(collection(db, "comments"));
+    querySnapshot.forEach((doc) => {
+        if (doc.id === id) {
+            return doc.data();
+        }
+    });
+}
+
+export const addComment = async (comment) => {
+    return await addDoc(collection(db, "comments"), comment);
+}
+
+export const getUser = async (id) => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+        if (doc.id === id) {
+            return doc.data();
+        }
+    });
+}
+
+export const addUser = async (user) => {
+    return await addDoc(collection(db, "users"), user);
 }
