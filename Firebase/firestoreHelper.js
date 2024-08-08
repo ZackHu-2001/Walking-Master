@@ -11,7 +11,12 @@ export const getGameInfo = async (id) => {
 }
 
 export const addGame = async (game) => {
-    return await addDoc(collection(db, "games"), game);
+  try{
+    const gameRef = await addDoc(collection(db, "games"), game);
+    return gameRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 }
 
 export const getComment = async (id) => {
