@@ -3,20 +3,20 @@ import { Button } from "react-native-paper";
 import React from "react";
 
 const NewGame = () => {
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text>游玩方法</Text>
+        <Text>Rules</Text>
         <Text>散步途中捕捉到卡片描述画面时，拍摄上传照片即可占领当前格。完成连线（横向、纵向、斜向）宣布获胜，耶嘿！（Tips：不能耍赖用旧照片哦）</Text>
       </View>
 
       <View style={styles.card}>
-        <Text>棋盘大小</Text>
+        <Text>Board Size</Text>
       </View>
 
       <View style={styles.card}>
-        <Text>棋盘大小</Text>
+        <Text>Theme</Text>
         <ScrollView>
 
         </ScrollView>
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     paddingRight: 25,
     backgroundColor: 'white',
     borderRadius: 20,
-
   },
   card: {
     width: '100%',
