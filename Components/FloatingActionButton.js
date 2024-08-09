@@ -1,39 +1,40 @@
 import { FAB, Portal } from 'react-native-paper';
+import React, { useEffect } from 'react';
 
-const FloatingActionButton = () => {
+const FloatingActionButton = ({ addNewGame, addRoom, editRoom }) => {
+  const [open, setOpen] = React.useState(false);
+  const onStateChange = ({ open }) => setOpen(open);
 
   return (
-    <Portal>
-      <FAB.Group
-        open={open}
-        visible
-        icon={open ? 'calendar-today' : 'plus'}
-        actions={[
-          { icon: 'plus', onPress: () => console.log('Pressed add') },
-          {
-            icon: 'star',
-            label: 'Star',
-            onPress: () => console.log('Pressed star'),
-          },
-          {
-            icon: 'email',
-            label: 'Email',
-            onPress: () => console.log('Pressed email'),
-          },
-          {
-            icon: 'bell',
-            label: 'Remind',
-            onPress: () => console.log('Pressed notifications'),
-          },
-        ]}
-        onStateChange={onStateChange}
-        onPress={() => {
-          if (open) {
-            // do something if the speed dial is open
-          }
-        }}
-      />
-    </Portal>
+    <FAB.Group
+      open={open}
+      style={{ paddingBottom: 50, paddingRight: 10, }}
+      visible
+      icon={open ? 'close' : 'plus'}
+      actions={[
+        {
+          icon: 'square-edit-outline',
+          label: 'Edit Rooms',
+          onPress: () => editRoom(),
+        },
+        {
+          icon: 'star',
+          label: 'Add Room',
+          onPress: () => addRoom(),
+        },
+        {
+          icon: 'plus',
+          label: 'New Game',
+          onPress: () => addNewGame(),
+        },
+      ]}
+      onStateChange={onStateChange}
+      onPress={() => {
+        if (open) {
+          // do something if the speed dial is open
+        }
+      }}
+    />
   )
 }
 
