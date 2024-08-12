@@ -11,7 +11,6 @@ const NotificationCenterScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Fetch game data when the component mounts
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -26,7 +25,6 @@ const NotificationCenterScreen = () => {
     fetchGames();
   }, []);
 
-  // Request permission for notifications
   useEffect(() => {
     const getPermission = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
@@ -58,14 +56,13 @@ const NotificationCenterScreen = () => {
       return;
     }
 
-    // Schedule a notification
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Game Reminder",
         body: `Don't forget about your game: ${selectedGame.name}`,
       },
       trigger: {
-        seconds: Math.floor(timeDifference / 1000), // Convert milliseconds to seconds
+        seconds: Math.floor(timeDifference / 1000),
       },
     });
 
@@ -75,17 +72,18 @@ const NotificationCenterScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select Game to Set Notification:</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedGame}
-          onValueChange={(itemValue) => setSelectedGame(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select a game" value={null} />
-          {games.map((game, index) => (
-            <Picker.Item key={index} label={game.name} value={game} />
-          ))}
-        </Picker>
+      
+      <View style={[styles.pickerContainer, Platform.OS === 'ios' && styles.pickerContainerIOS]}>
+      <Picker
+      selectedValue={selectedGame}
+      onValueChange={(itemValue) => setSelectedGame(itemValue)}
+      style={styles.picker}
+    >
+      <Picker.Item label="Select a game" value={null} />
+      {games.map((game, index) => (
+        <Picker.Item key={`${game.id}-${index}`} label={game.name} value={game} />
+      ))}
+    </Picker>
       </View>
 
       <View style={styles.dateTimeContainer}>
@@ -96,7 +94,7 @@ const NotificationCenterScreen = () => {
             mode="datetime"
             display="default"
             onChange={onChangeDateTime}
-            style={styles.dateTimePicker}
+            style={[styles.dateTimePicker, Platform.OS === 'ios' && styles.dateTimePickerIOS]}
           />
         )}
       </View>
@@ -122,7 +120,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   pickerContainer: {
-    marginBottom: 30,
+    marginBottom: 20,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  pickerContainerIOS: {
+    paddingLeft: 10,
   },
   picker: {
     height: 50,
@@ -135,8 +141,10 @@ const styles = StyleSheet.create({
   dateTimePicker: {
     width: '100%',
   },
+  dateTimePickerIOS: {
+    marginTop: 10,
+  },
   buttonContainer: {
-    marginTop: 20,
     alignItems: 'center',
   },
 });
