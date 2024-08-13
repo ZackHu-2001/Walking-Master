@@ -3,6 +3,7 @@ import { View, Text, Button, Alert, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getGames } from '../Firebase/firestoreHelper';
 import * as Notifications from 'expo-notifications';
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const NotificationCenterScreen = () => {
@@ -38,8 +39,32 @@ const NotificationCenterScreen = () => {
 
   const onChangeDateTime = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShowDatePicker(Platform.OS === 'ios');
     setDate(currentDate);
+    if (Platform.OS === 'ios') {
+      setShowDatePicker(false);
+    }
+  };
+
+  const showDatePickerAndroid = () => {
+    DateTimePickerAndroid.open({
+      value: date,
+      onChange: onChangeDateTime,
+      mode: 'date',
+      is24Hour: true,
+    });
+  };
+
+  const showTimePickerAndroid = () => {
+    DateTimePickerAndroid.open({
+      value: date,
+      onChange: onChangeDateTime,
+      mode: 'time',
+      is24Hour: true,
+    });
+  };
+
+  const showDateTimePickerIOS = () => {
+    setShowDatePicker(true);
   };
 
   const scheduleNotification = async () => {
@@ -74,27 +99,34 @@ const NotificationCenterScreen = () => {
       <Text style={styles.title}>Select Game to Set Notification:</Text>
       
       <View style={[styles.pickerContainer, Platform.OS === 'ios' && styles.pickerContainerIOS]}>
-      <Picker
-      selectedValue={selectedGame}
-      onValueChange={(itemValue) => setSelectedGame(itemValue)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Select a game" value={null} />
-      {games.map((game, index) => (
-        <Picker.Item key={`${game.id}-${index}`} label={game.name} value={game} />
-      ))}
-    </Picker>
+        <Picker
+          selectedValue={selectedGame}
+          onValueChange={(itemValue) => setSelectedGame(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select a game" value={null} />
+          {games.map((game, index) => (
+            <Picker.Item key={game.id || index} label={game.name} value={game} />
+          ))}
+        </Picker>
       </View>
 
       <View style={styles.dateTimeContainer}>
-        <Button title="Pick Date & Time" onPress={() => setShowDatePicker(true)} />
-        {showDatePicker && (
+        {Platform.OS === 'android' ? (
+          <>
+            <Button title="Pick Date" onPress={showDatePickerAndroid} />
+            <Button title="Pick Time" onPress={showTimePickerAndroid} />
+          </>
+        ) : (
+          <Button title="Pick Date & Time" onPress={showDateTimePickerIOS} />
+        )}
+        {showDatePicker && Platform.OS === 'ios' && (
           <DateTimePicker
             value={date}
             mode="datetime"
             display="default"
             onChange={onChangeDateTime}
-            style={[styles.dateTimePicker, Platform.OS === 'ios' && styles.dateTimePickerIOS]}
+            style={styles.dateTimePicker}
           />
         )}
       </View>
@@ -138,14 +170,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignItems: 'center',
   },
-  dateTimePicker: {
-    width: '100%',
-  },
-  dateTimePickerIOS: {
-    marginTop: 10,
-  },
   buttonContainer: {
     alignItems: 'center',
+  },
+  dateTimePicker: {
+    width: '100%',
   },
 });
 
