@@ -40,6 +40,7 @@ const SignUp = ({ navigation }) => {
       await setDoc(doc(db, "users", user.uid), {
         username: username,
         email: email,
+        userId: user.uid,
       });
 
       Alert.alert("Success", "User registered successfully");
