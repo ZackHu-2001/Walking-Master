@@ -32,31 +32,10 @@ export default function GameBoardScreen({ navigation }) {
     showModal();
   }
 
-
-  // useEffect(() => {
-  //   if (!user) return;
-  //   console.log(user);
-
-  //   const fetchGames = async () => {
-  //     console.log('fetching games');
-  //     // Remove this line: const user = await getUser(user.uid);
-  //     const unsubscribe = listenForGames(user.games, (games) => {
-  //       setGames(games);
-  //     });
-  //     return unsubscribe;
-  //   }
-
-  //   fetchGames().then(unsubscribe => {
-  //     // Cleanup subscription on unmount
-  //     return () => {
-  //       if (unsubscribe) unsubscribe();
-  //     };
-  //   });
-  // }, [user]);
-
   useEffect(() => {
     if (!user) return;
-    // console.log(user)
+    let unsubscribeFunction = null;
+
     const fetchGames = async () => {
       try {
         const userInfo = await getUser(user.uid);
@@ -69,9 +48,16 @@ export default function GameBoardScreen({ navigation }) {
       }
     }
 
-    const unsubscribe = fetchGames();
+    const unsubscribe = fetchGames().then((unsubscribe) => {
+      unsubscribeFunction = unsubscribe;
+    });
+
     // Cleanup subscription on unmount
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubscribeFunction === 'function') {
+        unsubscribeFunction();
+      }
+    };
   }, [user]);
 
   return (

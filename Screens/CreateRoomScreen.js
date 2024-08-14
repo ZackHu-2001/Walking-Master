@@ -42,7 +42,7 @@ const CreateRoomScreen = ({ navigation }) => {
       for (let j = 0; j < size; j++) {
         let idx = Math.floor(Math.random() * imgNames.length);
         while (exist.has(idx)) {
-          idx = Math.random() * imgNames.length;
+          idx = Math.floor(Math.random() * imgNames.length);
         }
         const imgUrl = await getImgUrl(baseURL + imgNames[idx]);
         row.cells.push({
@@ -55,7 +55,6 @@ const CreateRoomScreen = ({ navigation }) => {
     }
     const gameId = await addGame(game);
     const newUser = await getUser(user.uid);
-    console.log('newuser', newUser)
     newUser.games.push(gameId);
     await updateUser(user.uid, newUser);
 

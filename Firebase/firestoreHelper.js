@@ -79,12 +79,6 @@ export const getUser = async (id) => {
       return querySnapshot.docs[i].data();
     }
   }
-  // querySnapshot.forEach((doc) => {
-  //   console.log(doc.id)
-  //   if (doc.id === id) {
-  //     return doc.data();
-  //   }
-  // });
 }
 
 export const updateUser = async (id, user) => {

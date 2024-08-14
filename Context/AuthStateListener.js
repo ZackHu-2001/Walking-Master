@@ -7,7 +7,6 @@ function AuthStateListener({ children }) {
   const { setUser } = useContext(Context);
 
   useEffect(() => {
-    console.log("bar")
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
