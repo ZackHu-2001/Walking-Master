@@ -4,12 +4,11 @@ import { addGame, getUser } from '../Firebase/firestoreHelper';
 import Context from '../Context/context';
 import { imgNames, baseURL } from '../misc';
 import { RadioButton } from 'react-native-paper';
-import { storage } from '../Firebase/FirebaseSetup';
+import { auth, storage } from '../Firebase/FirebaseSetup';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const CreateRoomScreen = ({ navigation }) => {
   const context = useContext(Context);
-  const { userId } = context;
   const [gameName, setGameName] = useState('');
   const [boardSize, setBoardSize] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -27,7 +26,7 @@ const CreateRoomScreen = ({ navigation }) => {
 
     game = {
       timeStamp: Date.now(),
-      creater: userId,
+      creater: auth.currentUser.uid,
       size: size,
       bgImgUrl: null,
       tiles: [],
@@ -54,6 +53,10 @@ const CreateRoomScreen = ({ navigation }) => {
       game.tiles.push(row);
     }
     const gameId = await addGame(game);
+    const newUser = await getUser(auth.currentUser.uid);
+    newUser.games.push(gameId);
+    await updateUser(auth.currentUser.uid, newUser);
+
     navigation.navigate('Game', { gameId: gameId });
   }
 

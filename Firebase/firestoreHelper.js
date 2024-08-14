@@ -1,11 +1,15 @@
 import { db } from "./FirebaseSetup";
-import { onSnapshot, collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { onSnapshot, collection, addDoc, deleteDoc, setDoc,
+  doc, updateDoc, getDocs } from "firebase/firestore";
 
-export const getGames = async () => {
+export const getGames = async (ids) => {
   const querySnapshot = await getDocs(collection(db, "games"));
   const games = [];
   querySnapshot.forEach((doc) => {
-    games.push(doc.data());
+    if (ids.includes(doc.id)) {
+    // if (doc.data().creater === auth.currentUser.uid) {
+      games.push(doc.data());
+    }
   });
   return games;
 }
@@ -80,6 +84,6 @@ export const updateUser = async (id, user) => {
   return await updateDoc(doc(db, "users", id), user);
 }
 
-export const addUser = async (user) => {
-  return await addDoc(collection(db, "users"), user);
+export const addUser = async (uid, user) => {
+  return await setDoc(doc(db, "users", uid), user);
 }
