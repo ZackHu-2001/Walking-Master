@@ -2,7 +2,7 @@ import { db } from "./FirebaseSetup";
 import { onSnapshot, collection, addDoc, deleteDoc, setDoc,
   doc, updateDoc, getDocs } from "firebase/firestore";
 
-export const getGames = async (ids) => {
+export const getGames = async (ids = []) => {
   const querySnapshot = await getDocs(collection(db, "games"));
   const games = [];
   querySnapshot.forEach((doc) => {
@@ -28,7 +28,7 @@ export const updateGame = async (id, game) => {
   return await updateDoc(doc(db, "games", id), game);
 }
 
-export const listenForGames = (ids, callback) => {
+export const listenForGames = (ids = [], callback) => {
   const gamesCollection = collection(db, 'games');
 
   return onSnapshot(gamesCollection, (snapshot) => {
