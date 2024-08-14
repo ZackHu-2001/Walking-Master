@@ -21,33 +21,33 @@ const requestLibraryPermission = async () => {
   return true;
 };
 
-export const handleSelectImage = async (setImageUri) => {
+export const handleSelectImage = async () => {
   const hasPermission = await requestLibraryPermission();
   if (!hasPermission) return;
 
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true,
-    aspect: [4, 3],
+    allowsMultipleSelection: true, // 启用多选
+    selectionLimit: 10,
     quality: 1,
   });
 
-  if (!result.cancelled) {
-    setImageUri(result.uri);
+  if (!result.canceled) {
+    const uriList = result.assets.map((asset) => asset.uri);
+    return uriList;
   }
 };
 
-export const handleTakePhoto = async (setImageUri) => {
+export const handleTakePhoto = async () => {
   const hasPermission = await requestCameraPermission();
   if (!hasPermission) return;
 
   const result = await ImagePicker.launchCameraAsync({
-    allowsEditing: true,
-    aspect: [4, 3],
     quality: 1,
   });
 
-  if (!result.cancelled) {
-    setImageUri(result.uri);
+  if (!result.canceled) {
+    console.log('result uri', result.assets[0].uri)
+    return result.assets[0].uri;
   }
 };
