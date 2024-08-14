@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { View, Button, StyleSheet, Text, TextInput, Alert } from 'react-native';
-import { addGame, getUser } from '../Firebase/firestoreHelper';
+import { addGame, getUser,updateUser } from '../Firebase/firestoreHelper';
 import Context from '../Context/context';
 import { imgNames, baseURL } from '../misc';
 import { RadioButton } from 'react-native-paper';
@@ -9,6 +9,7 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const CreateRoomScreen = ({ navigation }) => {
   const context = useContext(Context);
+  const { user } = context;
   const [gameName, setGameName] = useState('');
   const [boardSize, setBoardSize] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -53,9 +54,10 @@ const CreateRoomScreen = ({ navigation }) => {
       game.tiles.push(row);
     }
     const gameId = await addGame(game);
-    const newUser = await getUser(auth.currentUser.uid);
+    const newUser = await getUser(user.uid);
+    console.log('newuser', newUser)
     newUser.games.push(gameId);
-    await updateUser(auth.currentUser.uid, newUser);
+    await updateUser(user.uid, newUser);
 
     navigation.navigate('Game', { gameId: gameId });
   }

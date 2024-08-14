@@ -1,11 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomTabNavigator from './Navigation/BottomTabNavigator';
 import NotificationCenterScreen from './Screens/NotificationCenterScreen';
 import { PaperProvider, DefaultTheme } from 'react-native-paper';
+import AuthStateListener from './Context/AuthStateListener';
+
 import SignUp from './Screens/SignUp';
 import LogIn from './Screens/LogIn';
 import { ContextProvider } from './Context/context';
@@ -14,7 +14,6 @@ import GameScreen from './Screens/GameScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
   const customTheme = {
     ...DefaultTheme,
     colors: {
@@ -31,17 +30,19 @@ export default function App() {
 
   return (
     <ContextProvider>
-      <PaperProvider theme={customTheme}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="MainTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
-            <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
-            <Stack.Screen name="Game" component={GameScreen} />
-            <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="LogIn" component={LogIn} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+      <AuthStateListener>
+        <PaperProvider theme={customTheme}>
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen name="MainTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
+              <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
+              <Stack.Screen name="Game" component={GameScreen} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="LogIn" component={LogIn} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </AuthStateListener>
     </ContextProvider>
   );
 }

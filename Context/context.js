@@ -4,13 +4,13 @@ import React, { createContext, useState } from 'react';
 const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-  const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState(null);
   const [gameInfo, setGameInfo] = useState(null);
-  
+
   return (
     <Context.Provider value={{
-      userId,
-      setUserId
+      user,
+      setUser,
     }}>
       {children}
     </Context.Provider>

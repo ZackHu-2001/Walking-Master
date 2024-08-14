@@ -14,7 +14,7 @@ export const imgNames = [
   "倒霉.png",
   "假冒伪劣.png",
   "傻瓜.png",
-  "兔费.png",
+  "免费.png",
   "兵人.png",
   "凑热闹.png",
   "分享.png",
