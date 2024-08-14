@@ -1,5 +1,5 @@
-import { Dimensions, View, StyleSheet, ScrollView, Text } from "react-native";
-import { Button } from "react-native-paper";
+import { Dimensions, View, StyleSheet, ScrollView } from "react-native";
+import { Button, Text } from "react-native-paper";
 import React from "react";
 
 const NewGame = () => {
@@ -7,16 +7,16 @@ const NewGame = () => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text>Rules</Text>
+        <Text variant="titleMedium">Rules</Text>
         <Text>散步途中捕捉到卡片描述画面时，拍摄上传照片即可占领当前格。完成连线（横向、纵向、斜向）宣布获胜，耶嘿！（Tips：不能耍赖用旧照片哦）</Text>
       </View>
 
       <View style={styles.card}>
-        <Text>Board Size</Text>
+        <Text variant="titleMedium">Board Size</Text>
       </View>
 
       <View style={styles.card}>
-        <Text>Theme</Text>
+        <Text variant="titleMedium">Theme</Text>
         <ScrollView>
 
         </ScrollView>
@@ -53,12 +53,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
   },
-  button: {
-    backgroundColor: 'white',
-    width: 40,
-    height: 20
-  },
-
 });
 
 export default NewGame;

@@ -2,7 +2,7 @@ import { TextInput, View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { Button } from "react-native-paper";
 import { Dimensions } from "react-native";
-// import {}
+
 const AddRoom = () => {
   const [roomCode, setRoomCode] = React.useState('');
 
@@ -20,7 +20,7 @@ const AddRoom = () => {
     <View style={styles.container}>
       <Text>Add Room</Text>
       <TextInput placeholder="Paste room code here"></TextInput>
-      <Button onPress={handleAddRoom}>Add</Button>
+      <Button style={{ marginTop: 20 }} mode="contained" onPress={handleAddRoom}>Add</Button>
     </View>
   );
 }

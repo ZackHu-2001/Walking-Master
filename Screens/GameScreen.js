@@ -1,23 +1,49 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import { getGameInfo } from "../Firebase/firestoreHelper";
+import { View, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import { getGameInfo, updateGame } from "../Firebase/firestoreHelper";
 import Tile from "../Components/Tile";
 import { useRoute } from "@react-navigation/native";
-import { Portal, Modal, Button, IconButton } from "react-native-paper";
-import { Dimensions } from "react-native";
-import { handleSelectImage, handleTakePhoto } from "../ImageManager";
+import { Modal, IconButton } from "react-native-paper";
+import { Dimensions, ImageBackground } from "react-native";
+import ImageList from "../Components/ImageList";
+import ImageDetail from "../Components/ImageDetail";
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
   const [tiles, setTiles] = useState([]);
-  const [currentTile, setCurrentTile] = useState(null);
+  const [currentTile, setCurrentTile] = useState({
+    row: 0,
+    col: 0,
+    data: null
+  });
   const route = useRoute();
   const { gameId } = route.params;
   const [visible, setVisible] = useState(false);
-  const [imageUri, setImageUri] = useState(null);
+  const [imageList, setImageList] = useState([]);
+  const [modalState, setModalState] = useState({
+    content: ImageList,
+    props: { imageList: [] }
+  });
+
+  const updateModalContent = (content, props) => {
+    setModalState({ content, props });
+  };
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const handleDismiss = () => {
+    hideModal();
+    let newTiles = tiles;
+    newTiles[currentTile.row]['cells'][currentTile.col].photos = imageList;
+    setTiles(newTiles);
+    updateGame(gameId, { tiles: newTiles });
+    setImageList([]);
+  }
+
+  useEffect(() => {
+    updateModalContent(ImageList, { imageList, setImageList });
+  }, [imageList]);
 
   useEffect(() => {
     const fetchGameInfo = async () => {
@@ -28,22 +54,8 @@ const GameScreen = ({ navigation }) => {
     }
 
     fetchGameInfo();
+    updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
   }, []);
-
-  const handleButtonPress = () => {
-    Alert.alert(
-      'Select an option',
-      '',
-      [
-        { text: 'Take Photo', onPress: () => handleTakePhoto(setImageUri) },
-        { text: 'Choose from Library', onPress: () => handleSelectImage(setImageUri) },
-        { text: 'Cancel', style: 'cancel' },
-      ],
-      { cancelable: true }
-    );
-  };
-
-  let overallIndex = 0;
 
   return (
     <>
@@ -52,14 +64,21 @@ const GameScreen = ({ navigation }) => {
           gameInfo &&
           <View style={styles.tilesContainer}>
             {
-              tiles.map((row, index) => {
-                return <View key={index} style={styles.tilesRow}>
+              tiles.map((row, rowIndex) => {
+                return <View key={rowIndex} style={styles.tilesRow}>
                   {
-                    row['cells'].map((tile, index) => {
-                      overallIndex++;
-                      return <Tile key={index} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
+                    row['cells'].map((tile, colIndex) => {
+                      // const tileIndex = rowIndex * row['cells'].length + colIndex;
+                      return <Tile key={colIndex} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
+                        // console.log(tile)
+                        setImageList(tile.photos)
                         showModal()
-                        setCurrentTile(overallIndex - 1)
+                        updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
+                        setCurrentTile({
+                          row: rowIndex,
+                          col: colIndex,
+                          data: tile
+                        })
                       }} />
                     })
                   }
@@ -70,22 +89,9 @@ const GameScreen = ({ navigation }) => {
         }
       </View>
 
-      <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={modalStyles.modal}>
-      <View style={modalStyles.container}>
-        <TouchableOpacity >
-          <IconButton
-            onPress={handleButtonPress}
-            icon="plus"
-            color={'#000'}
-            size={60}
-            style={{ width: 120, height: 120, backgroundColor: '#898989' }}
-          />
-        </TouchableOpacity>
-        {
-
-        }
-      </View>
-    </Modal >
+      <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={modalStyles.modal}>
+        <modalState.content {...modalState.props} />
+      </Modal>
     </>
   );
 }
@@ -98,8 +104,12 @@ const modalStyles = StyleSheet.create({
   },
   container: {
     width: Dimensions.get('window').width - 40,
-    flexDirection: 'column',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    overflow: 'scroll',
+    justifyContent: 'space-around',
     gap: 15,
+    maxHeight: 470,
     paddingTop: 40,
     paddingBottom: 40,
     paddingLeft: 25,
@@ -116,6 +126,19 @@ const modalStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
+  },
+  image: {
+    width: 120,
+    height: 120,
+    borderRadius: 15,
+  },
+  addButton: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#898989',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -134,7 +157,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 25,
     transform: [{ translateY: Dimensions.get('window').height / 6 }],
-    // justifyContent: 'center',
     alignItems: 'center'
   },
   tilesRow: {
