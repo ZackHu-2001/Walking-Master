@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { auth, db } from "../Firebase/FirebaseSetup";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { addUser } from "../Firebase/firestoreHelper";
 
 const SignUp = ({ navigation }) => {
 
@@ -34,14 +34,13 @@ const SignUp = ({ navigation }) => {
     }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Store the username in Firestore
-      await setDoc(doc(db, "users", user.uid), {
+      const newUser = {
         username: username,
         email: email,
-        userId: user.uid,
-      });
+        games: [],
+      };
+
+      addUser(userCredential.user.uid, newUser)
 
       Alert.alert("Success", "User registered successfully");
       navigation.replace("LogIn");

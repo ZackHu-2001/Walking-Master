@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { View, Button, StyleSheet, Text, TextInput, Alert } from 'react-native';
-import { addGame, getUser } from '../Firebase/firestoreHelper';
+import { addGame, getUser,updateUser } from '../Firebase/firestoreHelper';
 import Context from '../Context/context';
 import { imgNames, baseURL } from '../misc';
 import { RadioButton } from 'react-native-paper';
-import { storage } from '../Firebase/FirebaseSetup';
+import { auth, storage } from '../Firebase/FirebaseSetup';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const CreateRoomScreen = ({ navigation }) => {
   const context = useContext(Context);
-  const { userId } = context;
+  const { user } = context;
   const [gameName, setGameName] = useState('');
   const [boardSize, setBoardSize] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -27,7 +27,7 @@ const CreateRoomScreen = ({ navigation }) => {
 
     game = {
       timeStamp: Date.now(),
-      creater: userId,
+      creater: auth.currentUser.uid,
       size: size,
       bgImgUrl: null,
       tiles: [],
@@ -42,7 +42,7 @@ const CreateRoomScreen = ({ navigation }) => {
       for (let j = 0; j < size; j++) {
         let idx = Math.floor(Math.random() * imgNames.length);
         while (exist.has(idx)) {
-          idx = Math.random() * imgNames.length;
+          idx = Math.floor(Math.random() * imgNames.length);
         }
         const imgUrl = await getImgUrl(baseURL + imgNames[idx]);
         row.cells.push({
@@ -54,6 +54,10 @@ const CreateRoomScreen = ({ navigation }) => {
       game.tiles.push(row);
     }
     const gameId = await addGame(game);
+    const newUser = await getUser(user.uid);
+    newUser.games.push(gameId);
+    await updateUser(user.uid, newUser);
+
     navigation.navigate('Game', { gameId: gameId });
   }
 

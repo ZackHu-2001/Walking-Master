@@ -16,7 +16,6 @@ const uploadImageToFirebase = async (uri) => {
   return downloadUri;
 }
 
-
 const ImageList = ({
   imageList,
   setImageList,

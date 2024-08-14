@@ -6,11 +6,14 @@ import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
 import AddRoom from '../Components/ModalContent/AddRoom';
+import { auth } from '../Firebase/FirebaseSetup';
+import Context from '../Context/context';
 
 export default function GameBoardScreen({ navigation }) {
   const [games, setGames] = useState([]);
   const [visible, setVisible] = React.useState(false);
   const [modalContent, setModalContent] = React.useState(1);
+  const { user } = useContext(Context);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -30,13 +33,32 @@ export default function GameBoardScreen({ navigation }) {
   }
 
   useEffect(() => {
-    const unsubscribe = listenForGames((games) => {
-      setGames(games);
+    if (!user) return;
+    let unsubscribeFunction = null;
+
+    const fetchGames = async () => {
+      try {
+        const userInfo = await getUser(user.uid);
+        const unsubscribe = listenForGames(userInfo.games, (games) => {
+          setGames(games);
+        });
+        return unsubscribe;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const unsubscribe = fetchGames().then((unsubscribe) => {
+      unsubscribeFunction = unsubscribe;
     });
 
     // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      if (typeof unsubscribeFunction === 'function') {
+        unsubscribeFunction();
+      }
+    };
+  }, [user]);
 
   return (
     <>
@@ -51,7 +73,7 @@ export default function GameBoardScreen({ navigation }) {
           ))
         }
       </ScrollView>
-      <FloatingActionButton addNewGame={addNewGame} addRoom={addRoom} editRoom={editRoom}/>
+      <FloatingActionButton addNewGame={addNewGame} addRoom={addRoom} editRoom={editRoom} />
 
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle} >
         {modalContent ? <NewGame /> : <AddRoom />}

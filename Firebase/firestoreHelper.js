@@ -1,11 +1,14 @@
 import { db } from "./FirebaseSetup";
-import { onSnapshot, collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { onSnapshot, collection, addDoc, deleteDoc, setDoc,
+  doc, updateDoc, getDocs } from "firebase/firestore";
 
-export const getGames = async () => {
+export const getGames = async (ids) => {
   const querySnapshot = await getDocs(collection(db, "games"));
   const games = [];
   querySnapshot.forEach((doc) => {
-    games.push(doc.data());
+    if (ids.includes(doc.id)) {
+      games.push(doc.data());
+    }
   });
   return games;
 }
@@ -25,13 +28,15 @@ export const updateGame = async (id, game) => {
   return await updateDoc(doc(db, "games", id), game);
 }
 
-export const listenForGames = (callback) => {
+export const listenForGames = (ids, callback) => {
   const gamesCollection = collection(db, 'games');
 
   return onSnapshot(gamesCollection, (snapshot) => {
     const games = [];
     snapshot.forEach((doc) => {
-      games.push({ id: doc.id, ...doc.data() });
+      if (ids.includes(doc.id)) {
+        games.push({ id: doc.id, ...doc.data() });
+      }
     });
     callback(games);
   });
@@ -69,17 +74,17 @@ export const addComment = async (comment) => {
 
 export const getUser = async (id) => {
   const querySnapshot = await getDocs(collection(db, "users"));
-  querySnapshot.forEach((doc) => {
-    if (doc.id === id) {
-      return doc.data();
+  for (let i = 0; i < querySnapshot.docs.length; i++) {
+    if (querySnapshot.docs[i].id === id) {
+      return querySnapshot.docs[i].data();
     }
-  });
+  }
 }
 
 export const updateUser = async (id, user) => {
   return await updateDoc(doc(db, "users", id), user);
 }
 
-export const addUser = async (user) => {
-  return await addDoc(collection(db, "users"), user);
+export const addUser = async (uid, user) => {
+  return await setDoc(doc(db, "users", uid), user);
 }
