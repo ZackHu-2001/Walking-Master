@@ -17,7 +17,6 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('User is available:', user);
       setEmail(user.email || '');
       fetchUserData(user.uid);
     } else {
@@ -26,7 +25,6 @@ const ProfileScreen = () => {
   }, [user]);
 
   const fetchUserData = async (uid) => {
-    console.log('Fetching user data for UID:', uid);
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
@@ -43,7 +41,6 @@ const ProfileScreen = () => {
   };
 
   const uploadImageAsync = async (uri, path) => {
-    console.log('Uploading image to path:', path);
     try {
       const storage = getStorage();
       const storageRef = ref(storage, path);
@@ -62,7 +59,6 @@ const ProfileScreen = () => {
   };
 
   const handleAvatarPress = async () => {
-    console.log('Avatar pressed');
     Alert.alert(
       'Select an option',
       '',
@@ -90,7 +86,6 @@ const ProfileScreen = () => {
   };
 
   const processImage = async (uri) => {
-    console.log('Processing image:', uri);
     const uploadedUrl = await uploadImageAsync(uri, `avatars/${user.uid}`);
     if (uploadedUrl) {
       console.log('Image uploaded successfully:', uploadedUrl);
@@ -115,7 +110,6 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
-      console.log('Logging out');
       await signOut(auth);
       setUser(null);
       Alert.alert('Success', 'User logged out successfully');
