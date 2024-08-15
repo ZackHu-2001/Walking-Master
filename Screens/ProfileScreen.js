@@ -9,24 +9,29 @@ import Context from '../Context/context';
 import { signOut } from 'firebase/auth';
 
 const ProfileScreen = () => {
-  const { user } = useContext(Context);
-  const navigation = useNavigation(); // Add this to use navigation
+  const { user, setUser } = useContext(Context);
+  const navigation = useNavigation();
   const [avatarUri, setAvatarUri] = useState('https://via.placeholder.com/100'); // Default avatar
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
     if (user) {
+      console.log('User is available:', user);
       setEmail(user.email || '');
       fetchUserData(user.uid);
+    } else {
+      console.log('No user in context');
     }
   }, [user]);
 
   const fetchUserData = async (uid) => {
+    console.log('Fetching user data for UID:', uid);
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        console.log('User data fetched:', userData);
         setUsername(userData.username || '');
         setAvatarUri(userData.avatarUrl || 'https://via.placeholder.com/100');
       } else {
@@ -38,6 +43,7 @@ const ProfileScreen = () => {
   };
 
   const uploadImageAsync = async (uri, path) => {
+    console.log('Uploading image to path:', path);
     try {
       const storage = getStorage();
       const storageRef = ref(storage, path);
@@ -46,7 +52,9 @@ const ProfileScreen = () => {
 
       await uploadBytes(storageRef, blob);
 
-      return await getDownloadURL(storageRef);
+      const downloadUrl = await getDownloadURL(storageRef);
+      console.log('Image uploaded, download URL:', downloadUrl);
+      return downloadUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
       return null;
@@ -54,6 +62,7 @@ const ProfileScreen = () => {
   };
 
   const handleAvatarPress = async () => {
+    console.log('Avatar pressed');
     Alert.alert(
       'Select an option',
       '',
@@ -61,6 +70,7 @@ const ProfileScreen = () => {
         {
           text: 'Take Photo',
           onPress: async () => {
+            console.log('Take Photo selected');
             const uri = await handleTakePhoto();
             if (uri) await processImage(uri);
           },
@@ -68,6 +78,7 @@ const ProfileScreen = () => {
         {
           text: 'Choose from Library',
           onPress: async () => {
+            console.log('Choose from Library selected');
             const uriList = await handleSelectImage();
             if (uriList && uriList.length > 0) await processImage(uriList[0]); // process the first image
           },
@@ -79,12 +90,15 @@ const ProfileScreen = () => {
   };
 
   const processImage = async (uri) => {
+    console.log('Processing image:', uri);
     const uploadedUrl = await uploadImageAsync(uri, `avatars/${user.uid}`);
     if (uploadedUrl) {
+      console.log('Image uploaded successfully:', uploadedUrl);
       setAvatarUri(uploadedUrl);
 
       try {
         if (user?.uid) {
+          console.log('Updating user document with new avatar URL');
           await updateDoc(doc(db, 'users', user.uid), { avatarUrl: uploadedUrl });
           Alert.alert('Success', 'Avatar updated successfully!');
         } else {
@@ -101,9 +115,13 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
+      console.log('Logging out');
       await signOut(auth);
+      setUser(null);
       Alert.alert('Success', 'User logged out successfully');
+      navigation.navigate('LogIn');
     } catch (error) {
+      console.error('Error logging out:', error);
       Alert.alert('Error', error.message);
     }
   };

@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { auth, db } from "../Firebase/FirebaseSetup";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { CommonActions } from '@react-navigation/native';
+import Context from '../Context/context'; // Import the context
 
 const LogIn = ({ navigation }) => {
   const [identifier, setIdentifier] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const { setUser } = useContext(Context); // Access the setUser function from the context
 
   const handleLogIn = async () => {
     if (!identifier || !password) {
@@ -28,6 +30,13 @@ const LogIn = ({ navigation }) => {
           return;
         }
       }
+
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const loggedInUser = userCredential.user;
+      console.log('User logged in:', loggedInUser);
+
+      // Update the global user context
+      setUser(loggedInUser);
 
       Alert.alert("Success", "User logged in successfully");
       navigation.dispatch(
