@@ -1,5 +1,5 @@
 import { Text, Dimensions, View, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Button, Checkbox } from "react-native-paper";
+import { Button, Checkbox, ActivityIndicator } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 import { addGame, getUser, updateUser } from "../../Firebase/firestoreHelper";
 import { getDownloadURL, ref } from "firebase/storage";
@@ -64,6 +64,8 @@ const createNewGame = async (size, theme, uid) => {
 
 const NewGame = ({ hideModal, navigateToGame }) => {
   const [size, setSize] = useState(3);
+  const [isLoading, setIsLoading] = useState(false);
+
   const themes = [
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F141723173959_.pic.jpg?alt=media&token=1db9b6f2-78a2-4e85-9978-f3c229433b63',
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F151723173963_.pic.jpg?alt=media&token=4e0ec2b6-d9c6-4b8f-9dad-56418f7248f4',
@@ -101,12 +103,17 @@ const NewGame = ({ hideModal, navigateToGame }) => {
         </ScrollView>
       </View>
 
-      <Button onPress={async () => {
-        const gameId = await createNewGame(size, theme, user.uid);
-        hideModal();
-        navigateToGame(gameId);
-        // navigation.navigate('Game', { gameId: gameId });
-      }}>Create Game</Button>
+      {
+        isLoading ?
+          <ActivityIndicator animating={isLoading} color="#000" /> :
+          <Button onPress={async () => {
+            setIsLoading(true);
+            const gameId = await createNewGame(size, theme, user.uid);
+            setIsLoading(false);
+            hideModal();
+            navigateToGame(gameId);
+          }}>Create Game</Button>
+      }
 
     </View>
   );
