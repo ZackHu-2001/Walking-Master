@@ -25,46 +25,50 @@ const getImgUrl = async (imgRef) => {
   return url;
 }
 
-const createNewGame = async (size, theme, uid) => {
-  const newGame = {
-    timeStamp: Date.now(),
-    creater: uid,
-    size: size,
-    bgImgUrl: theme,
-    tiles: [],
-  }
-
-  const exist = new Set();
-  for (let i = 0; i < size; i++) {
-    const row = {
-      cells: []
-    };
-    for (let j = 0; j < 3; j++) {
-      let idx = Math.floor(Math.random() * imgNames.length);
-      while (exist.has(idx)) {
-        idx = Math.floor(Math.random() * imgNames.length);
-      }
-      const imgUrl = await getImgUrl(baseURL + imgNames[idx]);
-      row.cells.push({
-        photos: [],
-        visited: false,
-        bgImgUrl: imgUrl
-      });
-    }
-    newGame.tiles.push(row);
-  }
-  const gameId = await addGame(newGame);
-
-  const newUser = await getUser(uid);
-  newUser.games.push(gameId);
-  await updateUser(uid, newUser);
-  return gameId;
-}
-
 
 const NewGame = ({ hideModal, navigateToGame }) => {
   const [size, setSize] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
+
+  const createNewGame = async (size, theme, uid) => {
+    const newGame = {
+      timeStamp: Date.now(),
+      creater: uid,
+      size: size,
+      bgImgUrl: theme,
+      tiles: [],
+    }
+
+    const exist = new Set();
+    for (let i = 0; i < size; i++) {
+      const row = {
+        cells: []
+      };
+      for (let j = 0; j < 3; j++) {
+        let idx = Math.floor(Math.random() * imgNames.length);
+        while (exist.has(idx)) {
+          idx = Math.floor(Math.random() * imgNames.length);
+        }
+        const imgUrl = await getImgUrl(baseURL + imgNames[idx]);
+        row.cells.push({
+          photos: [],
+          visited: false,
+          bgImgUrl: imgUrl
+        });
+      }
+      newGame.tiles.push(row);
+    }
+    const gameId = await addGame(newGame);
+
+    const newUser = await getUser(uid);
+    newUser.games.push(gameId);
+    await updateUser(uid, newUser);
+    const preUser = user;
+    setUser(null)
+    setUser(preUser);
+    return gameId;
+  }
+
 
   const themes = [
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F141723173959_.pic.jpg?alt=media&token=1db9b6f2-78a2-4e85-9978-f3c229433b63',
@@ -73,7 +77,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F171723173969_.pic.jpg?alt=media&token=2e2b775c-460c-4907-8b5d-a311fd0a4023'
   ]
   const [theme, setTheme] = useState(themes[0]);
-  const { user } = useContext(Context);
+  const { user, setUser } = useContext(Context);
 
   return (
     <View style={styles.container}>

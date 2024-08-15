@@ -119,7 +119,7 @@ const ProfileScreen = () => {
       await signOut(auth);
       setUser(null);
       Alert.alert('Success', 'User logged out successfully');
-      navigation.navigate('LogIn');
+      navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);
       Alert.alert('Error', error.message);
