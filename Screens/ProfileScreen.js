@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Button, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../Firebase/FirebaseSetup';
+import { db, auth } from '../Firebase/FirebaseSetup';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
+import { signOut } from 'firebase/auth';
 
 const ProfileScreen = () => {
   const { user } = useContext(Context);
@@ -100,7 +101,7 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await signOut(auth);
       Alert.alert('Success', 'User logged out successfully');
     } catch (error) {
       Alert.alert('Error', error.message);
