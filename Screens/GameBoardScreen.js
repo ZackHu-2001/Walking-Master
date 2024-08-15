@@ -60,6 +60,10 @@ export default function GameBoardScreen({ navigation }) {
     };
   }, [user]);
 
+  navigateToGame = (gameId) => {
+    navigation.navigate('Game', { gameId });
+  }
+
   return (
     <>
       <ScrollView contentContainerStyle={styles.scrollView} >
@@ -76,7 +80,7 @@ export default function GameBoardScreen({ navigation }) {
       <FloatingActionButton addNewGame={addNewGame} addRoom={addRoom} editRoom={editRoom} />
 
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle} >
-        {modalContent ? <NewGame /> : <AddRoom />}
+        {modalContent ? <NewGame hideModal={hideModal} navigateToGame={navigateToGame} /> : <AddRoom hideModal={hideModal}/>}
       </Modal>
     </>
   )
