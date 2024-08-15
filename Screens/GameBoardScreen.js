@@ -79,7 +79,7 @@ export default function GameBoardScreen({ navigation }) {
       <FloatingActionButton addNewGame={addNewGame} addRoom={addRoom} editRoom={editRoom} />
 
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle} >
-        {modalContent ? <NewGame hideModal={hideModal} navigateToGame={navigateToGame} /> : <AddRoom hideModal={hideModal}/>}
+        {modalContent ? <NewGame hideModal={hideModal} navigateToGame={navigateToGame} hideModal={hideModal} navigateToGame={navigateToGame} /> : <AddRoom hideModal={hideModal} hideModal={hideModal}/>}
       </Modal>
     </>
   )

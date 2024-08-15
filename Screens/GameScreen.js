@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert, Image, ActivityIndicator } from "react-native";
 import { getGameInfo, updateGame } from "../Firebase/firestoreHelper";
 import Tile from "../Components/Tile";
 import { useRoute } from "@react-navigation/native";
