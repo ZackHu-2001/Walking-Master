@@ -6,7 +6,6 @@ import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
 import AddRoom from '../Components/ModalContent/AddRoom';
-import { auth } from '../Firebase/FirebaseSetup';
 import Context from '../Context/context';
 
 export default function GameBoardScreen({ navigation }) {

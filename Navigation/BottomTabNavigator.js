@@ -14,8 +14,8 @@ const BottomTabNavigator = () => (
         let iconName;
         if (route.name === 'Game Board') {
           iconName = focused ? 'grid' : 'grid-outline';
-        } else if (route.name === 'Create Room') {
-          iconName = focused ? 'add-circle' : 'add-circle-outline';
+        // } else if (route.name === 'Create Room') {
+        //   iconName = focused ? 'add-circle' : 'add-circle-outline';
         } else if (route.name === 'Profile') {
           iconName = focused ? 'person' : 'person-outline';
         }
@@ -32,7 +32,7 @@ const BottomTabNavigator = () => (
     })}
   >
     <Tab.Screen name="Game Board" component={GameBoardScreen} />
-    <Tab.Screen name="Create Room" component={CreateRoomScreen} />
+    {/* <Tab.Screen name="Create Room" component={CreateRoomScreen} /> */}
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
 );
