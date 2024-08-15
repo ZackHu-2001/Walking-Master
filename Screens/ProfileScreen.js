@@ -4,10 +4,12 @@ import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
 
 const ProfileScreen = () => {
   const { user } = useContext(Context);
+  const navigation = useNavigation(); // Add this to use navigation
   const [avatarUri, setAvatarUri] = useState('https://via.placeholder.com/100'); // Default avatar
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
