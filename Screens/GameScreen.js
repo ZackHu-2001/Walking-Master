@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Image, ActivityIndicator } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert, Image, ActivityIndicator, Button } from "react-native";
 import { getGameInfo, updateGame } from "../Firebase/firestoreHelper";
 import Tile from "../Components/Tile";
 import { useRoute } from "@react-navigation/native";
@@ -7,6 +7,7 @@ import { Modal, IconButton } from "react-native-paper";
 import { Dimensions, ImageBackground } from "react-native";
 import ImageList from "../Components/ImageList";
 import ImageDetail from "../Components/ImageDetail";
+import LocationManager from "../LocationManager";
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
@@ -70,8 +71,8 @@ const GameScreen = ({ navigation }) => {
                     row['cells'].map((tile, colIndex) => {
                       // const tileIndex = rowIndex * row['cells'].length + colIndex;
                       return <Tile key={colIndex} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
-                        // console.log(tile)
                         setImageList(tile.photos)
+                        console.log("ImageList", imageList)
                         showModal()
                         updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
                         setCurrentTile({

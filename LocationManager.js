@@ -1,73 +1,81 @@
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
-import { MAPS_API_KEY } from "@env"; // Ensure you are using the correct environment variable name
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { writeWithIdToDB, getADoc } from "../Firebase/firestoreHelper";
-import { auth } from "../Firebase/firebaseSetup";
+import { auth, db } from './Firebase/FirebaseSetup';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { MAPS_API_KEY } from "@env"; 
 
 const LocationManager = () => {
-  const route = useRoute();
   const [location, setLocation] = useState(null);
   const [permissionResponse, requestPermission] = Location.useForegroundPermissions();
   const navigation = useNavigation();
+  const route = useRoute();
 
+  // Fetch location from route params or Firestore
   useEffect(() => {
-    if (route.params) {
-      setLocation(route.params);
-      console.log("Location set from route:", route.params);
-    }
+    const fetchLocation = async () => {
+      if (route.params) {
+        setLocation(route.params);
+        console.log("Location set from route:", route.params);
+      } else {
+        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.location) {
+            setLocation(userData.location);
+          }
+        }
+      }
+    };
+    fetchLocation();
   }, [route.params]);
 
-  useEffect(() => {
-    async function getUserData() {
-      const userData = await getADoc("users", auth.currentUser.uid);
-      if (userData?.location) {
-        setLocation(userData.location);
-      }
-  }
-  getUserData();
-  }, []);
-
-  async function verifyPermission() {
-    console.log(permissionResponse);
+  // Verify location permission
+  const verifyPermission = async () => {
     if (permissionResponse?.granted) {
       return true;
     }
-    // Ask for permission if not already granted
     const permissionResult = await requestPermission();
     return permissionResult.granted;
-  }
+  };
 
-  async function locateUserHandler() {
+  // Handle user location fetching
+  const locateUserHandler = async () => {
+    const hasPermission = await verifyPermission();
+    if (!hasPermission) {
+      Alert.alert("Permission required", "You need to give permission to access location");
+      return;
+    }
+
     try {
-      const hasPermission = await verifyPermission();
-      if (!hasPermission) {
-        Alert.alert("Permission required", "You need to give permission to access location");
-        return;
-      }
       const result = await Location.getCurrentPositionAsync({});
-      setLocation({
+      const userLocation = {
         latitude: result.coords.latitude,
         longitude: result.coords.longitude
-      });
-      console.log("Location set:", result);
+      };
+      setLocation(userLocation);
+      console.log("Location set:", userLocation);
     } catch (err) {
-      console.log("Error in getting location", err);
+      console.error("Error getting location:", err);
     }
-  }
+  };
 
-  // Generate the Google Static Map URL
+  // Generate Google Static Map URL
   const generateMapUrl = () => {
     if (!location) return null;
-    return (`https://maps.googleapis.com/maps/api/staticmap?center=${location.latitude},${location.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location.latitude},${location.longitude}&key=${MAPS_API_KEY}`);  
+    return `https://maps.googleapis.com/maps/api/staticmap?center=${location.latitude},${location.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location.latitude},${location.longitude}&key=${MAPS_API_KEY}`;
   };
 
-  function saveLocationHandler() {
-        writeWithIdToDB({ location }, "users", auth.currentUser.uid);
-        navigation.navigate("Home");
+  // Save location to Firestore
+  const saveLocationHandler = async () => {
+    try {
+      await setDoc(doc(db, "users", auth.currentUser.uid), { location }, { merge: true });
+      navigation.navigate("Home");
+    } catch (err) {
+      console.error("Error saving location:", err);
+    }
   };
-
 
   return (
     <View style={styles.container}>
@@ -81,9 +89,8 @@ const LocationManager = () => {
             style={styles.mapImage}
             source={{ uri: generateMapUrl() }}
           />
-          <Button title="Let me select my location" onPress={()=>{navigation.navigate("Map")}} />
+          <Button title="Let me select my location" onPress={() => navigation.navigate("Map")} />
           <Button title="Save Location" onPress={saveLocationHandler} />
-          
         </>
       )}
     </View>
