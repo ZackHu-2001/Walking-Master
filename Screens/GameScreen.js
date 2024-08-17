@@ -7,7 +7,7 @@ import { Modal, IconButton } from "react-native-paper";
 import { Dimensions, ImageBackground } from "react-native";
 import ImageList from "../Components/ImageList";
 import ImageDetail from "../Components/ImageDetail";
-import LocationManager from "../LocationManager";
+// import LocationManager from "../LocationManager";
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
@@ -72,7 +72,7 @@ const GameScreen = ({ navigation }) => {
                       // const tileIndex = rowIndex * row['cells'].length + colIndex;
                       return <Tile key={colIndex} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
                         setImageList(tile.photos)
-                        console.log("ImageList", imageList)
+                        // console.log("ImageList", imageList)
                         showModal()
                         updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
                         setCurrentTile({

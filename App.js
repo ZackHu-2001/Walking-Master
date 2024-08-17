@@ -15,6 +15,7 @@ import GameScreen from './Screens/GameScreen';
 import LoginScreen from './Screens/NewLogin';
 import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
 import SignupScreen from './Screens/NewSignUp';
+import Map from './Map';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,7 @@ export default function App() {
                   <Stack.Screen name="MainTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
                   <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
                   <Stack.Screen name="Game" component={GameScreen} />
+                  <Stack.Screen name="Map" component={Map} />
                   </> : <>
                     <Stack.Screen name="Login" component={LoginScreen} />
                     <Stack.Screen name="Signup" component={SignupScreen} />

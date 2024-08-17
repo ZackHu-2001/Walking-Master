@@ -7,6 +7,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
 import { signOut } from 'firebase/auth';
+import LocationManager from '../LocationManager';
 
 const ProfileScreen = () => {
   const { user, setUser } = useContext(Context);
@@ -131,6 +132,7 @@ const ProfileScreen = () => {
           <Text style={styles.userEmail}>{email}</Text>
           <Button title="Logout" onPress={handleLogout} />
           <Button title="Notifications" onPress={() => navigation.navigate('NotificationCenter')} />
+          <LocationManager />
         </>
       ) : (
         <>
