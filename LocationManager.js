@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { auth, db } from './Firebase/FirebaseSetup';
+import { db } from './Firebase/FirebaseSetup';
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { MAPS_API_KEY } from "@env"; 
-import Map from "./Map";
+import { MAPS_API_KEY } from "@env";
+import Context from "./Context/context";
 
 const LocationManager = () => {
+  const { user } = useContext(Context); // Get user from Context
   const [location, setLocation] = useState(null);
   const [permissionResponse, requestPermission] = Location.useForegroundPermissions();
   const navigation = useNavigation();
   const route = useRoute();
 
-  // Fetch location from route params or Firestore
   useEffect(() => {
     const fetchLocation = async () => {
       if (route.params?.selectedLocation) {
         setLocation(route.params.selectedLocation);
-        console.log("Location set from route:", route.params.selectedLocation);
-      } else {
-        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+      } else if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
           if (userData.location) {
@@ -30,9 +29,8 @@ const LocationManager = () => {
       }
     };
     fetchLocation();
-  }, [route.params?.selectedLocation]); 
+  }, [route.params?.selectedLocation, user]);
 
-  // Verify location permission
   const verifyPermission = async () => {
     if (permissionResponse?.granted) {
       return true;
@@ -41,7 +39,6 @@ const LocationManager = () => {
     return permissionResult.granted;
   };
 
-  // Handle user location fetching
   const locateUserHandler = async () => {
     const hasPermission = await verifyPermission();
     if (!hasPermission) {
@@ -53,34 +50,28 @@ const LocationManager = () => {
       const result = await Location.getCurrentPositionAsync({});
       const userLocation = {
         latitude: result.coords.latitude,
-        longitude: result.coords.longitude
+        longitude: result.coords.longitude,
       };
       setLocation(userLocation);
-      console.log("Location set:", userLocation);
     } catch (err) {
       console.error("Error getting location:", err);
     }
   };
 
-  // Generate Google Static Map URL
   const generateMapUrl = () => {
     if (!location) return null;
     return `https://maps.googleapis.com/maps/api/staticmap?center=${location.latitude},${location.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location.latitude},${location.longitude}&key=${MAPS_API_KEY}`;
   };
 
-// Save location to Firestore in the existing user document
-const saveLocationHandler = async () => {
-  try {
-    // Get the reference to the current user's document
-    const userDocRef = doc(db, "users", auth.currentUser.uid);
-    // Update the location field in the user's document, merging it with existing data
-    await setDoc(userDocRef, { location }, { merge: true });
-    // Navigate back to the Home screen or any other screen as needed
-    navigation.goBack();
-  } catch (err) {
-    console.error("Error saving location:", err);
-  }
-};
+  const saveLocationHandler = async () => {
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      await setDoc(userDocRef, { location }, { merge: true });
+      navigation.goBack();
+    } catch (err) {
+      console.error("Error saving location:", err);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -90,10 +81,7 @@ const saveLocationHandler = async () => {
           <Text style={styles.locationText}>
             Latitude: {location.latitude}, Longitude: {location.longitude}
           </Text>
-          <Image
-            style={styles.mapImage}
-            source={{ uri: generateMapUrl() }}
-          />
+          <Image style={styles.mapImage} source={{ uri: generateMapUrl() }} />
           <Button title="Let me select my location" onPress={() => navigation.navigate("Map")} />
           <Button title="Save Location" onPress={saveLocationHandler} />
         </>
