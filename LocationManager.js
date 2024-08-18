@@ -76,7 +76,7 @@ const saveLocationHandler = async () => {
     // Update the location field in the user's document, merging it with existing data
     await setDoc(userDocRef, { location }, { merge: true });
     // Navigate back to the Home screen or any other screen as needed
-    navigation.navigate("Profile");
+    navigation.goBack();
   } catch (err) {
     console.error("Error saving location:", err);
   }
