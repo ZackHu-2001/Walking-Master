@@ -3,7 +3,7 @@ import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { db } from './Firebase/FirebaseSetup';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, collection, addDoc } from "firebase/firestore";
 import { MAPS_API_KEY } from "@env";
 import Context from "./Context/context";
 
@@ -18,18 +18,10 @@ const LocationManager = () => {
     const fetchLocation = async () => {
       if (route.params?.selectedLocation) {
         setLocation(route.params.selectedLocation);
-      } else if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.location) {
-            setLocation(userData.location);
-          }
-        }
       }
     };
     fetchLocation();
-  }, [route.params?.selectedLocation, user]);
+  }, [route.params?.selectedLocation]);
 
   const verifyPermission = async () => {
     if (permissionResponse?.granted) {
@@ -64,12 +56,18 @@ const LocationManager = () => {
   };
 
   const saveLocationHandler = async () => {
+    if (!location || !user) return;
+
     try {
-      const userDocRef = doc(db, "users", user.uid);
-      await setDoc(userDocRef, { location }, { merge: true });
+      // Save the location to a subcollection in Firestore
+      const userLocationsRef = collection(db, "users", user.uid, "locations");
+      await addDoc(userLocationsRef, location);
+
+      Alert.alert("Success", "Location saved successfully!");
       navigation.goBack();
     } catch (err) {
       console.error("Error saving location:", err);
+      Alert.alert("Error", "Unable to save location, please try again later.");
     }
   };
 
