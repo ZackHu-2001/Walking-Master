@@ -8,14 +8,12 @@ import AuthStateListener from './Context/AuthStateListener';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './Firebase/FirebaseSetup';
 import { useEffect, useState } from 'react';
-import SignUp from './Screens/SignUp';
-import LogIn from './Screens/LogIn';
 import { ContextProvider } from './Context/context';
 import GameScreen from './Screens/GameScreen';
-import LoginScreen from './Screens/NewLogin';
+import LoginScreen from './Screens/LogInScreen';
 import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
-import SignupScreen from './Screens/NewSignUp';
 import Map from './Map';
+import SignupScreen from './Screens/SignUpScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,29 +32,15 @@ export default function App() {
     return unsubscribe; // Cleanup the listener on unmount
   }, []);
 
-  const customTheme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      primary: '#bb86fc', // Customize the primary color
-      accent: '#f1c40f', // Customize the accent color
-      background: '#ffffff', // Customize the background color
-      surface: '#f5f5f5', // Customize the surface color
-      text: '#333333', // Customize the text color
-      placeholder: '#b0bec5', // Customize the placeholder color
-      // You can customize other colors here
-    },
-  };
-
   return (
     <ContextProvider>
       <AuthStateListener>
-        <PaperProvider theme={customTheme}>
+        <PaperProvider>
           <NavigationContainer>
             <Stack.Navigator>
               {
                 isUserAuthenticated ? <>
-                  <Stack.Screen name="MainTabs" component={BottomTabNavigator} options={{ headerShown: false }} />
+                  <Stack.Screen name="GameBoard" component={BottomTabNavigator} options={{ headerShown: false }} />
                   <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
                   <Stack.Screen name="Game" component={GameScreen} />
                   <Stack.Screen name="Map" component={Map} />
@@ -64,11 +48,8 @@ export default function App() {
                     <Stack.Screen name="Login" component={LoginScreen} />
                     <Stack.Screen name="Signup" component={SignupScreen} />
                     <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                  {/* <Stack.Screen name="LogIn" component={LogIn} />
-                  <Stack.Screen name="SignUp" component={SignUp} /> */}
                 </>
               }
-
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
