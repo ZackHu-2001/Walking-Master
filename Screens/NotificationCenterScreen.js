@@ -1,41 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Button, Alert, StyleSheet, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { getDoc, doc } from 'firebase/firestore'; // Import Firestore methods
 import { getGames } from '../Firebase/firestoreHelper';
+import { db } from '../Firebase/FirebaseSetup'; // Ensure you're importing your Firestore setup
 import * as Notifications from 'expo-notifications';
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Context from '../Context/context';
 
 const NotificationCenterScreen = () => {
+  const { user } = useContext(Context);
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const gamesData = await getGames();
-        setGames(gamesData);
-      } catch (error) {
-        console.error("Error fetching games:", error);
-        Alert.alert("Error", "Unable to fetch games");
+    const fetchUserGames = async () => {
+      if (user && user.uid) {
+        console.log("User UID:", user.uid);
+        try {
+          // Fetch user document from Firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log("User data fetched:", userData);
+            if (userData.games && userData.games.length > 0) {
+              const gamesData = await getGames(userData.games);
+              if (gamesData.length > 0) {
+                console.log("Fetched games:", gamesData);
+                setGames(gamesData);
+              } else {
+                console.log("No games found for this user.");
+              }
+            } else {
+              console.log("User has no games in their profile.");
+            }
+          } else {
+            console.log("No user document found for this UID.");
+          }
+        } catch (error) {
+          console.error("Error fetching games:", error);
+          Alert.alert("Error", "Unable to fetch games.");
+        }
+      } else {
+        console.log("No user found in context.");
       }
     };
 
-    fetchGames();
-  }, []);
-
-  useEffect(() => {
-    const getPermission = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'You need to allow notifications to set reminders.');
-      }
-    };
-
-    getPermission();
-  }, []);
+    fetchUserGames();
+  }, [user]);
 
   const onChangeDateTime = (event, selectedDate) => {
     const currentDate = selectedDate || date;
