@@ -12,7 +12,7 @@ import { ContextProvider } from './Context/context';
 import GameScreen from './Screens/GameScreen';
 import LoginScreen from './Screens/LogInScreen';
 import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
-import Map from './Map';
+import Map from './Screens/Map';
 import SignupScreen from './Screens/SignUpScreen';
 
 const Stack = createNativeStackNavigator();
