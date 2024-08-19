@@ -48,7 +48,7 @@ export default modalStyles = StyleSheet.create({
   addButton: {
     width: 120,
     height: 120,
-    backgroundColor: '#b9b9b9',
+    backgroundColor: '#f0f0f0',
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -97,5 +97,20 @@ export default modalStyles = StyleSheet.create({
     borderRadius: 10,
     maxWidth: '80%',
     padding: 10,
+  },
+  smallImageLoading: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
+  },
+  largeImageLoading: {
+    position: 'absolute',
+    paddingTop: 40,
+    width: 300,
+    height: 300,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
   },
 });

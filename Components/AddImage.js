@@ -21,12 +21,21 @@ const AddImage = ({
   const submit = async () => {
     console.log('user', user)
     setIsLoading(true)
-    const commentRef = await addComment({
-      comments: [{
-        content: comment,
-        creater: user.uid,
-      }]
-    });
+    let commentRef = null;
+
+    if (!comment) {
+      console.log("no comment")
+      commentRef = await addComment({
+        comments: []
+      });
+    } else {
+      commentRef = await addComment({
+        comments: [{
+          content: comment,
+          creater: user.uid,
+        }]
+      });
+    }
     const photos = uploadImages.map(uri => ({ uri: uri, comment: commentRef, location: location }))
 
     setImageList(prev => {
@@ -51,11 +60,11 @@ const AddImage = ({
       />
       <TouchableOpacity style={{
         width: '100%', display: 'flex', flexDirection: 'row',
-         alignItems: 'center'
+        alignItems: 'center'
       }}>
 
         <Ionicons name="location-outline" size={30} />
-        <Text style={{marginLeft: 10}}>Select Location</Text>
+        <Text style={{ marginLeft: 10 }}>Select Location</Text>
       </TouchableOpacity>
       {
         isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Release</Button>
