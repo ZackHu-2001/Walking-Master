@@ -18,10 +18,10 @@ const NotificationCenterScreen = () => {
   const fadeAnim = useState(new Animated.Value(0))[0]; // 初始透明度设为0
 
   useEffect(() => {
-    // 页面加载时的淡入效果
+    // fade in animation when loading
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000, // 动画持续时间为 1 秒
+      duration: 1000, // last for 1 second
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
@@ -121,7 +121,9 @@ const NotificationCenterScreen = () => {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <Text style={styles.title}>Select Game to Set Notification:</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Select Game to Set Notification:</Text>
+      </View>
 
       <DropDownPicker
         open={open}
@@ -182,15 +184,19 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#ffffff',
   },
+  titleContainer: {
+    width: '80%',
+    alignSelf: 'center',
+    marginBottom: 20, 
+  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
     textAlign: 'center',
     color: '#6A4C9C',
   },
   dropdownContainer: {
-    marginBottom: 20,
+    marginBottom: 60,
     width: '80%',
     alignSelf: 'center',
   },
@@ -199,7 +205,7 @@ const styles = StyleSheet.create({
     borderColor: '#7B90D2',
   },
   dropdownContainerStyle: {
-    backgroundColor: '#e5e5ff',  // 下拉列表背景色
+    backgroundColor: '#e5e5ff',  // for the dropdown list
   },
   textStyle: {
     color: '#333333',
