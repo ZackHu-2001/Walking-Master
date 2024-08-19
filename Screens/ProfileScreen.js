@@ -193,19 +193,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatar: {
-    width: 150, // Larger size for the avatar
-    height: 150, // Larger size for the avatar
+    width: 150, 
+    height: 150, 
     borderRadius: 75, // Half of the width/height to make it circular
     marginBottom: 10,
   },
   avatarIcon: {
-    backgroundColor: '#e0e0e0', // Background color for the icon when no avatar is set
+    backgroundColor: '#e0e0e0', 
     marginBottom: 10,
   },
   cameraIconContainer: {
     position: 'absolute',
-    bottom: 10, // Adjusted to better fit the larger avatar
-    right: 10,  // Adjusted to better fit the larger avatar
+    bottom: 10, 
+    right: 10, 
   },
   cameraIcon: {
     backgroundColor: '#fff',
