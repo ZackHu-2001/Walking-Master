@@ -15,6 +15,16 @@ const NotificationCenterScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0]; // 初始透明度设为0
+
+  useEffect(() => {
+    // 页面加载时的淡入效果
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000, // 动画持续时间为 1 秒
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
 
   useEffect(() => {
     const fetchUserGames = async () => {
@@ -110,7 +120,7 @@ const NotificationCenterScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <Text style={styles.title}>Select Game to Set Notification:</Text>
 
       <DropDownPicker
@@ -161,7 +171,7 @@ const NotificationCenterScreen = () => {
           <Text style={styles.confirmButtonText}>SCHEDULE NOTIFICATION</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -180,7 +190,7 @@ const styles = StyleSheet.create({
     color: '#6A4C9C',
   },
   dropdownContainer: {
-    marginBottom: 100,
+    marginBottom: 20,
     width: '80%',
     alignSelf: 'center',
   },
@@ -201,8 +211,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   labelStyle: {
-    color: '#333333', 
-    fontSize: 16,
+    color: '#4E4F97', 
     fontSize: 16,
     fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto', 
   },
@@ -241,6 +250,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25, 
     width: '80%',
+    alignSelf: 'center',
   },
   confirmButtonText: {
     color: '#ffffff',
