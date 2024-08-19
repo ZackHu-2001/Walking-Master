@@ -29,7 +29,6 @@ const NotificationCenterScreen = () => {
             if (userData.games && userData.games.length > 0) {
               const gamesData = await getGames(userData.games);
               if (gamesData.length > 0) {
-                console.log("Fetched games:", gamesData);
                 setGames(gamesData);
               } else {
                 console.log("No games found for this user.");
