@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, StyleSheet, View, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "./Firebase/FirebaseSetup";
+import { db } from "../Firebase/FirebaseSetup";
 import { collection, getDocs, addDoc, query, where } from "firebase/firestore"; // Import necessary Firestore functions
-import Context from "./Context/context";
+import Context from "../Context/context";
 
 const Map = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);

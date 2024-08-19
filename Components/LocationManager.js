@@ -2,10 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { db } from './Firebase/FirebaseSetup';
+import { db } from '../Firebase/FirebaseSetup';
 import { doc, collection, addDoc } from "firebase/firestore";
 import { MAPS_API_KEY } from "@env";
-import Context from "./Context/context";
+import Context from "../Context/context";
 
 const LocationManager = () => {
   const { user } = useContext(Context); // Get user from Context

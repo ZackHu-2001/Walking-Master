@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Button, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity, Image } from 'react-native'; // Ensure Image is imported from 'react-native'
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../Firebase/FirebaseSetup';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
+import { Button, IconButton, Avatar, ActivityIndicator } from 'react-native-paper'; // Import Avatar and ActivityIndicator components from react-native-paper
 import { signOut } from 'firebase/auth';
-import LocationManager from '../LocationManager';
 
 const ProfileScreen = () => {
   const { user, setUser } = useContext(Context);
   const navigation = useNavigation();
-  const [avatarUri, setAvatarUri] = useState('https://via.placeholder.com/100'); // Default avatar
+  const [avatarUri, setAvatarUri] = useState(null); // Set default to null
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // State for loading indicator
 
   useEffect(() => {
     if (user) {
@@ -22,6 +23,7 @@ const ProfileScreen = () => {
       fetchUserData(user.uid);
     } else {
       console.log('No user in context');
+      setIsLoading(false); // Stop loading if no user
     }
   }, [user]);
 
@@ -32,12 +34,14 @@ const ProfileScreen = () => {
         const userData = userDoc.data();
         console.log('User data fetched:', userData);
         setUsername(userData.username || '');
-        setAvatarUri(userData.avatarUrl || 'https://via.placeholder.com/100');
+        setAvatarUri(userData.avatarUrl || null); // Set avatarUri based on the fetched data
       } else {
         console.log('No such user document!');
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+    } finally {
+      setIsLoading(false); // Stop loading after data fetch
     }
   };
 
@@ -67,7 +71,6 @@ const ProfileScreen = () => {
         {
           text: 'Take Photo',
           onPress: async () => {
-            console.log('Take Photo selected');
             const uri = await handleTakePhoto();
             if (uri) await processImage(uri);
           },
@@ -75,7 +78,6 @@ const ProfileScreen = () => {
         {
           text: 'Choose from Library',
           onPress: async () => {
-            console.log('Choose from Library selected');
             const uriList = await handleSelectImage();
             if (uriList && uriList.length > 0) await processImage(uriList[0]); // process the first image
           },
@@ -89,12 +91,10 @@ const ProfileScreen = () => {
   const processImage = async (uri) => {
     const uploadedUrl = await uploadImageAsync(uri, `avatars/${user.uid}`);
     if (uploadedUrl) {
-      console.log('Image uploaded successfully:', uploadedUrl);
       setAvatarUri(uploadedUrl);
 
       try {
         if (user?.uid) {
-          console.log('Updating user document with new avatar URL');
           await updateDoc(doc(db, 'users', user.uid), { avatarUrl: uploadedUrl });
           Alert.alert('Success', 'Avatar updated successfully!');
         } else {
@@ -121,23 +121,48 @@ const ProfileScreen = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator animating={true} size="large" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {user ? (
         <>
-          <TouchableOpacity onPress={handleAvatarPress}>
-            <Image source={{ uri: avatarUri }} style={styles.avatar} />
-          </TouchableOpacity>
+          <View style={styles.avatarContainer}>
+            <TouchableOpacity style={styles.avatarTouchable} onPress={handleAvatarPress}>
+              {avatarUri ? (
+                <Image source={{ uri: avatarUri }} style={styles.avatar} />
+              ) : (
+                <Avatar.Icon size={150} icon="account" style={styles.avatarIcon} />
+              )}
+              <View style={styles.cameraIconContainer}>
+                <IconButton icon="camera" size={24} style={styles.cameraIcon} />
+              </View>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.userName}>{username}</Text>
           <Text style={styles.userEmail}>{email}</Text>
-          <Button title="Logout" onPress={handleLogout} />
-          <Button title="Notifications" onPress={() => navigation.navigate('NotificationCenter')} />
-          <LocationManager />
+          <Button mode="contained" style={styles.button} onPress={handleLogout}>
+            Logout
+          </Button>
+          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('NotificationCenter')}>
+            Notifications
+          </Button>
         </>
       ) : (
         <>
-          <Button title="Login" onPress={() => navigation.navigate('LogIn')} />
-          <Button title="Sign Up" onPress={() => navigation.navigate('SignUp')} />
+          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('Login')}>
+            Login
+          </Button>
+          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+            Sign Up
+          </Button>
         </>
       )}
     </View>
@@ -149,20 +174,58 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 20,
+    marginTop: 10,
+  },
+  avatarContainer: {
+    position: 'relative',
+  },
+  avatarTouchable: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 20,
-  },
-  userName: {
-    fontSize: 20,
+    width: 150, // Larger size for the avatar
+    height: 150, // Larger size for the avatar
+    borderRadius: 75, // Half of the width/height to make it circular
     marginBottom: 10,
   },
+  avatarIcon: {
+    backgroundColor: '#e0e0e0', // Background color for the icon when no avatar is set
+    marginBottom: 10,
+  },
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: 10, // Adjusted to better fit the larger avatar
+    right: 10,  // Adjusted to better fit the larger avatar
+  },
+  cameraIcon: {
+    backgroundColor: '#fff',
+  },
+  userName: {
+    fontSize: 20, // Slightly increased font size
+    fontWeight: 'bold',
+    color: '#4A4A4A',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
   userEmail: {
-    fontSize: 16,
+    fontSize: 16, // Slightly increased font size
+    color: '#7A7A7A',
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  button: {
+    marginTop: 10,
+    width: '80%',
   },
 });
 

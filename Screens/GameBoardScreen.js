@@ -7,7 +7,7 @@ import { Modal, ActivityIndicator, Portal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
 import AddRoom from '../Components/ModalContent/AddRoom';
 import Context from '../Context/context';
-import LocationPicker from '../Components/LocationPicker';
+import LocationManager from '../Components/LocationManager';
 import { collection, query, where, onSnapshot, documentId } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 
@@ -144,7 +144,7 @@ export default function GameBoardScreen({ navigation }) {
           </ScrollView>
       }
 
-      {/* <LocationPicker /> */}
+      <LocationManager />
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle} >
           {modalContent ? <NewGame hideModal={hideModal} navigateToGame={navigateToGame} /> : <AddRoom hideModal={hideModal} />}
