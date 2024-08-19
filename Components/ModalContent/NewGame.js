@@ -10,10 +10,10 @@ import { storage } from "../../Firebase/FirebaseSetup";
 
 const ThemeCard = ({ theme, setTheme, selected }) => {
   return (
-    <TouchableOpacity onPress={() => setTheme(theme)} style={{display: 'flex', alignItems: 'center'}}>
+    <TouchableOpacity onPress={() => setTheme(theme)} style={{ display: 'flex', alignItems: 'center' }}>
       <Image source={{
         uri: theme
-      }} style={{height: 200, width: 100, marginLeft: 10, marginRight: 10}}/>
+      }} style={{ height: 180, width: 90, marginLeft: 10, marginRight: 10 }} />
       <Checkbox status={selected ? 'checked' : 'unchecked'} />
     </TouchableOpacity>
   );
@@ -29,11 +29,15 @@ const getImgUrl = async (imgRef) => {
 const NewGame = ({ hideModal, navigateToGame }) => {
   const [size, setSize] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
+  const { user, setUser } = useContext(Context);
 
   const createNewGame = async (size, theme, uid) => {
+    const userData = await getUser(uid);
+
     const newGame = {
       timeStamp: Date.now(),
       creater: uid,
+      createrName: userData.username,
       size: size,
       bgImgUrl: theme,
       tiles: [],
@@ -63,12 +67,10 @@ const NewGame = ({ hideModal, navigateToGame }) => {
     const newUser = await getUser(uid);
     newUser.games.push(gameId);
     await updateUser(uid, newUser);
-    const preUser = user;
     setUser(null)
-    setUser(preUser);
+    setUser(user);
     return gameId;
   }
-
 
   const themes = [
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F141723173959_.pic.jpg?alt=media&token=1db9b6f2-78a2-4e85-9978-f3c229433b63',
@@ -77,19 +79,19 @@ const NewGame = ({ hideModal, navigateToGame }) => {
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F171723173969_.pic.jpg?alt=media&token=2e2b775c-460c-4907-8b5d-a311fd0a4023'
   ]
   const [theme, setTheme] = useState(themes[0]);
-  const { user, setUser } = useContext(Context);
+  // const { user, setUser } = useContext(Context);
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Text >Rules</Text>
-        <Text>散步途中捕捉到卡片描述画面时，拍摄上传照片即可占领当前格。完成连线（横向、纵向、斜向）宣布获胜，耶嘿！（Tips：不能耍赖用旧照片哦）</Text>
+        <Text>During your walk, when you encounter a scene matching the card description, snap a photo and upload it to claim the spot. Complete a line (horizontal, vertical, or diagonal) to win.</Text>
       </View>
 
       <View style={styles.card}>
         <Text >Board Size</Text>
         <View style={{ flexDirection: 'row', gap: 10 }}>
-          <TouchableOpacity style={[styles.choice, size===3 && styles.selected]} onPress={() => setSize(3)}>
+          <TouchableOpacity style={[styles.choice, size === 3 && styles.selected]} onPress={() => setSize(3)}>
             <Text style={styles.choiceText}>3 x 3</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.choice, size === 4 && styles.selected]} onPress={() => setSize(4)}>
@@ -109,14 +111,15 @@ const NewGame = ({ hideModal, navigateToGame }) => {
 
       {
         isLoading ?
-          <ActivityIndicator animating={isLoading} color="#000" /> :
-          <Button onPress={async () => {
-            setIsLoading(true);
-            const gameId = await createNewGame(size, theme, user.uid);
-            setIsLoading(false);
-            hideModal();
-            navigateToGame(gameId);
-          }}>Create Game</Button>
+          <ActivityIndicator animating={isLoading} style={{ height: 40 }} /> :
+          <Button style={{ height: 40 }}
+            onPress={async () => {
+              setIsLoading(true);
+              const gameId = await createNewGame(size, theme, user.uid);
+              setIsLoading(false);
+              hideModal();
+              navigateToGame(gameId);
+            }}>Create Game</Button>
       }
 
     </View>
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   selected: {
-    backgroundColor: '#808080'
+    backgroundColor: '#909090'
   }
 });
 

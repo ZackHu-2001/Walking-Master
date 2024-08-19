@@ -1,6 +1,8 @@
 import { db } from "./FirebaseSetup";
-import { onSnapshot, collection, addDoc, deleteDoc, setDoc,
-  doc, updateDoc, getDocs } from "firebase/firestore";
+import {
+  onSnapshot, collection, addDoc, deleteDoc, setDoc,
+  doc, updateDoc, getDocs, getDoc, documentId
+} from "firebase/firestore";
 
 export const getGames = async (ids = []) => {
   const querySnapshot = await getDocs(collection(db, "games"));
@@ -28,19 +30,19 @@ export const updateGame = async (id, game) => {
   return await updateDoc(doc(db, "games", id), game);
 }
 
-export const listenForGames = (ids = [], callback) => {
-  const gamesCollection = collection(db, 'games');
+// export const listenForGames = (ids = [], callback) => {
+//   const gamesCollection = collection(db, 'games');
 
-  return onSnapshot(gamesCollection, (snapshot) => {
-    const games = [];
-    snapshot.forEach((doc) => {
-      if (ids.includes(doc.id)) {
-        games.push({ id: doc.id, ...doc.data() });
-      }
-    });
-    callback(games);
-  });
-};
+//   return onSnapshot(gamesCollection, (snapshot) => {
+//     const games = [];
+//     snapshot.forEach((doc) => {
+//       if (ids.includes(doc.id)) {
+//         games.push({ id: doc.id, ...doc.data() });
+//       }
+//     });
+//     callback(games);
+//   });
+// };
 
 export const addGame = async (game) => {
   try {
@@ -55,6 +57,18 @@ export const deleteGame = async (id) => {
   return await deleteDoc(doc(db, "games", id));
 }
 
+export const getCommentThroughRef = async (commentRef) => {
+
+  const docSnapshot = await getDoc(commentRef);
+
+  if (docSnapshot.exists()) {
+    return docSnapshot.data();
+  } else {
+    // Document does not exist
+    console.log("No such document!");
+  }
+}
+
 export const getComment = async (id) => {
   const querySnapshot = await getDocs(collection(db, "comments"));
   querySnapshot.forEach((doc) => {
@@ -64,8 +78,15 @@ export const getComment = async (id) => {
   });
 }
 
-export const updateComment = async (id, comment) => {
-  return await updateDoc(doc(db, "comments", id), comment);
+export const updateCommentThroughRef = async (commentRef, comments) => {
+  try {
+    await updateDoc(commentRef, comments);
+    console.log('comments',comments)
+    console.log("Document updated successfully!");
+  } catch (error) {
+    console.error("Error updating document:", error);
+  }
+  // return await updateDoc(doc(db, "comments", id), comment);
 }
 
 export const addComment = async (comment) => {

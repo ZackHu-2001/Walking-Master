@@ -1,58 +1,108 @@
-import React from 'react'
-import { Image, View, StyleSheet } from 'react-native'
-import { Dimensions } from 'react-native'
-const ImageDetail = () => {
+import React, { useEffect, useContext } from 'react'
+import { Image, View, Text, ScrollView, TextInput, Alert } from 'react-native'
+import { ActivityIndicator, Button } from 'react-native-paper'
+import modalStyles from '../Styles/ModalStyle'
+import { getUser, getCommentThroughRef, updateCommentThroughRef } from '../Firebase/firestoreHelper'
+import Context from '../Context/context'
+
+const Comment = ({ content, creater, orientation }) => {
+  const [createrInfo, setCreaterInfo] = React.useState(null);
+
+  useEffect(() => {
+    const fetchCreaterInfo = async () => {
+      const createrInfo = await getUser(creater)
+      console.log(createrInfo)
+      setCreaterInfo(createrInfo)
+    }
+    fetchCreaterInfo()
+  }, [creater])
+
   return (
-    <View style={modalStyles.container}>
-      <Image source={null} style={modalStyles.image} />
-    </View>
+    <>
+      {
+        createrInfo &&
+        <View style={modalStyles.commentContainer}>
+          <Text style={modalStyles.commentAuthor}>{createrInfo.username}:</Text>
+          <View style={modalStyles.commentText}>
+            <Text >{content}</Text>
+          </View>
+        </View>
+      }
+    </>
   )
 }
 
-const modalStyles = StyleSheet.create({
-  modal: {
-    width: Dimensions.get('window').width - 40,
-    padding: 20,
-    marginRight: 20,
-  },
-  container: {
-    width: Dimensions.get('window').width - 40,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    overflow: 'scroll',
-    justifyContent: 'space-around',
-    gap: 15,
-    maxHeight: 470,
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingLeft: 25,
-    paddingRight: 25,
-    backgroundColor: 'white',
-    borderRadius: 20,
-  },
-  card: {
-    width: '100%',
-    flexDirection: 'column',
-    gap: 10,
-    padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-  },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 15,
-  },
-  addButton: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#898989',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const ImageDetail = ({
+  currentImage,
+  setImageDetailVisible,
+}) => {
+  const [comments, setComments] = React.useState([])
+  const [comment, setComment] = React.useState(null);
+  const [focus, setFocus] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const { user } = useContext(Context)
+
+  useEffect(() => {
+    console.log("current image", currentImage)
+    const fetchComments = async () => {
+      const data = await getCommentThroughRef(currentImage.comment)
+      if (data) {
+        setComments(data.comments)
+      }
+    }
+    fetchComments()
+  }, [currentImage])
+
+  const submit = async () => {
+    if (!comment) {
+      Alert.alert('Comment cannot be empty')
+      return;
+    }
+
+    setIsLoading(true)
+    const newComments = [...comments]
+    newComments.push({ content: comment, creater: user.uid })
+    setComments(newComments)
+    setComment('')
+    await updateCommentThroughRef(currentImage.comment, { comments: newComments });
+    Alert.alert('Comment added successfully')
+    setIsLoading(false)
+  }
+
+  return (
+    <View style={[modalStyles.detailImageContainer, focus && modalStyles.focus]}>
+
+      <Image source={{
+        uri: currentImage.uri
+      }} style={modalStyles.detailImage} />
+
+      {
+        !focus && <View style={{ height: 120, display: 'flex', width: '90%' }}>
+          <ScrollView style={modalStyles.scrollView} contentContainerStyle={{ alignItems: 'flex-start' }}>
+            {
+              comments && comments.map((comment, index) => {
+                return <Comment key={index} content={comment.content} creater={comment.creater} />
+              })
+            }
+          </ScrollView>
+        </View>
+      }
+
+
+      <TextInput
+        style={modalStyles.input}
+        placeholder='Add your comment...'
+        onChangeText={(value) => setComment(value)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        value={comment}
+      />
+      {
+        isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Add Comment</Button>
+      }
+    </View>
+
+  )
+}
 
 export default ImageDetail;
