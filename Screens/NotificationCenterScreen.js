@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Alert, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, StyleSheet, Platform, TouchableOpacity, Animated } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
@@ -126,6 +126,7 @@ const NotificationCenterScreen = () => {
         dropDownContainerStyle={styles.dropdownContainerStyle}
         placeholderStyle={styles.placeholderStyle}
         labelStyle={styles.labelStyle}
+        textStyle={styles.textStyle}
         selectedItemLabelStyle={styles.selectedItemLabelStyle}
       />
 
@@ -179,14 +180,21 @@ const styles = StyleSheet.create({
     color: '#6A4C9C',
   },
   dropdownContainer: {
-    marginBottom: 20,
+    marginBottom: 100,
+    width: '80%',
+    alignSelf: 'center',
   },
   dropdown: {
     backgroundColor: '#ffffff',
-    borderColor: '#cccccc',
+    borderColor: '#7B90D2',
   },
   dropdownContainerStyle: {
-    backgroundColor: '#f0f0f0',  // 下拉列表背景色
+    backgroundColor: '#e5e5ff',  // 下拉列表背景色
+  },
+  textStyle: {
+    color: '#333333',
+    fontSize: 16,
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto',
   },
   placeholderStyle: {
     color: '#999999', 
@@ -196,12 +204,12 @@ const styles = StyleSheet.create({
     color: '#333333', 
     fontSize: 16,
     fontSize: 16,
-    fontFamily: 'Helvetica', 
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto', 
   },
   selectedItemLabelStyle: {
     color: '#6A4C9C',
     fontWeight: 'bold',
-    fontFamily: 'Courier New',
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto',
   },
   dateTimeContainer: {
     marginBottom: 30,
