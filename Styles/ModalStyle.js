@@ -98,4 +98,19 @@ export default modalStyles = StyleSheet.create({
     maxWidth: '80%',
     padding: 10,
   },
+  smallImageLoading: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
+  },
+  largeImageLoading: {
+    position: 'absolute',
+    paddingTop: 40,
+    width: 300,
+    height: 300,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
+  },
 });

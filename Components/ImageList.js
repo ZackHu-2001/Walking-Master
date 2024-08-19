@@ -25,7 +25,6 @@ const ImageList = ({
   setImageListVisible,
   setCurrentImage,
   setUploadImages,
-  handleImageListDismiss
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +42,6 @@ const ImageList = ({
             setUploadImages([uri]);
             setIsLoading(false);
             setImageListVisible(false);
-            // handleImageListDismiss();
             setAddImageVisible(true);
           }
         },
@@ -59,7 +57,6 @@ const ImageList = ({
             setUploadImages(tmpUris);
             setIsLoading(false);
             setImageListVisible(false);
-            // handleImageListDismiss();
             setAddImageVisible(true);
           }
         },
@@ -78,13 +75,14 @@ const ImageList = ({
             setImageDetailVisible(true);
             setImageListVisible(false);
           }}>
+            <ActivityIndicator size={40} style={modalStyles.smallImageLoading} />
             <Image source={{ uri: image.uri }} style={modalStyles.image} />
           </TouchableOpacity>
         })
       }
       <TouchableOpacity onPress={handleButtonPress} style={modalStyles.addButton}>
         {
-          isLoading ? <ActivityIndicator size="large" /> : <Ionicons name="add-outline" size={120} color="#898989" />
+          isLoading ? <ActivityIndicator size={40} /> : <Ionicons name="add-outline" size={120} color="#898989" />
         }
 
       </TouchableOpacity>

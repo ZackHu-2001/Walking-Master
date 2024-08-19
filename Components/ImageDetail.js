@@ -72,20 +72,28 @@ const ImageDetail = ({
   return (
     <View style={[modalStyles.detailImageContainer, focus && modalStyles.focus]}>
 
-      <Image source={{
-        uri: currentImage.uri
-      }} style={modalStyles.detailImage} />
-
+      <View style={modalStyles.detailImage} >
+        <ActivityIndicator size={60} style={modalStyles.largeImageLoading} />
+        <Image source={{
+          uri: currentImage.uri
+        }} style={modalStyles.detailImage} />
+      </View>
       {
-        !focus && <View style={{ height: 120, display: 'flex', width: '90%' }}>
-          <ScrollView style={modalStyles.scrollView} contentContainerStyle={{ alignItems: 'flex-start' }}>
+        comments.length === 0 ? <Text style={{ color: '#4f4f4f', paddingTop: 10, paddingBottom: 10 }}>No comments yet, add your first comment~</Text> :
+          <>
             {
-              comments && comments.map((comment, index) => {
-                return <Comment key={index} content={comment.content} creater={comment.creater} />
-              })
+              !focus && <View style={{ height: 120, display: 'flex', width: '90%' }}>
+
+                <ScrollView style={modalStyles.scrollView} contentContainerStyle={{ alignItems: 'flex-start' }}>
+                  {
+                    comments && comments.map((comment, index) => {
+                      return <Comment key={index} content={comment.content} creater={comment.creater} />
+                    })
+                  }
+                </ScrollView>
+              </View>
             }
-          </ScrollView>
-        </View>
+          </>
       }
 
 
