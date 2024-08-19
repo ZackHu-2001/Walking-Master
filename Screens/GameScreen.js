@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Image, ActivityIndicator, Button } from "react-native";
+import { View, Dimensions, Text, StyleSheet, ImageBackground, TouchableOpacity, Alert, Image, ActivityIndicator, Button } from "react-native";
 import { getGameInfo, updateGame } from "../Firebase/firestoreHelper";
 import Tile from "../Components/Tile";
 import { useRoute } from "@react-navigation/native";
-import { Modal, IconButton } from "react-native-paper";
-import { Dimensions, ImageBackground } from "react-native";
+import { Modal, FAB } from "react-native-paper";
 import ImageList from "../Components/ImageList";
+import modalStyles from "../Styles/ModalStyle";
+import AddImage from "../Components/AddImage";
 import ImageDetail from "../Components/ImageDetail";
 // import LocationManager from "../LocationManager";
+// import Clipboard from '@react-native-clipboard/clipboard';
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
@@ -19,22 +21,24 @@ const GameScreen = ({ navigation }) => {
   });
   const route = useRoute();
   const { gameId } = route.params;
-  const [visible, setVisible] = useState(false);
   const [imageList, setImageList] = useState([]);
-  const [modalState, setModalState] = useState({
-    content: ImageList,
-    props: { imageList: [] }
-  });
+  const [currentImage, setCurrentImage] = useState(null);
+  const [imageListVisible, setImageListVisible] = useState(false);
+  const [imageDetailVisible, setImageDetailVisible] = useState(false);
+  const [addImageVisible, setAddImageVisible] = useState(false);
+  const [uploadImages, setUploadImages] = useState([]);
 
-  const updateModalContent = (content, props) => {
-    setModalState({ content, props });
-  };
+  const [open, setOpen] = useState(false);
+  const onStateChange = ({ open }) => setOpen(open);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
 
-  const handleDismiss = () => {
-    hideModal();
+  const handleImageListDismiss = () => {
+    setImageListVisible(false);
     let newTiles = tiles;
     newTiles[currentTile.row]['cells'][currentTile.col].photos = imageList;
     setTiles(newTiles);
@@ -42,9 +46,15 @@ const GameScreen = ({ navigation }) => {
     setImageList([]);
   }
 
-  useEffect(() => {
-    updateModalContent(ImageList, { imageList, setImageList });
-  }, [imageList]);
+  const handleImageDetailDismiss = () => {
+    setImageListVisible(true);
+    setImageDetailVisible(false);
+  }
+
+  const handleAddImageDismiss = () => {
+    setImageListVisible(true);
+    setAddImageVisible(false);
+  }
 
   useEffect(() => {
     const fetchGameInfo = async () => {
@@ -55,11 +65,25 @@ const GameScreen = ({ navigation }) => {
     }
 
     fetchGameInfo();
-    updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
   }, []);
+
+  const copyCode = () => {
+    const code = gameId;
+    // Clipboard.setString(gameId);
+
+    Alert.alert("Room Code Copied", code);
+  }
+
+  const backToHome = () => {
+    navigation.navigate('GameBoard');
+  }
 
   return (
     <>
+      {
+        gameInfo &&
+        <ImageBackground source={{ uri: gameInfo.bgImgUrl }} style={styles.bgImg} />
+      }
       <View style={styles.container}>
         {
           gameInfo &&
@@ -69,12 +93,9 @@ const GameScreen = ({ navigation }) => {
                 return <View key={rowIndex} style={styles.tilesRow}>
                   {
                     row['cells'].map((tile, colIndex) => {
-                      // const tileIndex = rowIndex * row['cells'].length + colIndex;
                       return <Tile key={colIndex} imgUrl={tile.bgImgUrl} visited={tile.visited} onPress={() => {
                         setImageList(tile.photos)
-                        // console.log("ImageList", imageList)
-                        showModal()
-                        updateModalContent(ImageList, { imageList: imageList, setImageList: setImageList });
+                        setImageListVisible(true);
                         setCurrentTile({
                           row: rowIndex,
                           col: colIndex,
@@ -90,67 +111,64 @@ const GameScreen = ({ navigation }) => {
         }
       </View>
 
-      <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={modalStyles.modal}>
-        <modalState.content {...modalState.props} />
+      <Modal visible={imageListVisible} onDismiss={handleImageListDismiss} contentContainerStyle={modalStyles.modal}>
+        <ImageList imageList={imageList} setAddImageVisible={setAddImageVisible} setImageDetailVisible={setImageDetailVisible}
+          setImageListVisible={setImageListVisible} setCurrentImage={setCurrentImage} setUploadImages={setUploadImages}
+          handleImageListDismiss={handleImageListDismiss} />
       </Modal>
+
+      <Modal visible={imageDetailVisible} onDismiss={handleImageDetailDismiss} contentContainerStyle={modalStyles.modal}>
+        <ImageDetail currentImage={currentImage} setImageDetailVisible={setImageDetailVisible}
+          uploadImages={uploadImages} setImageList={setImageList} />
+      </Modal>
+
+      <Modal visible={addImageVisible} onDismiss={handleAddImageDismiss} contentContainerStyle={modalStyles.modal}>
+        <AddImage uploadImages={uploadImages} setImageList={setImageList}
+          handleAddImageDismiss={handleAddImageDismiss} setImageListVisible={setImageListVisible} />
+      </Modal>
+
+      {
+        !addImageVisible && !imageDetailVisible && !imageListVisible &&
+        <FAB.Group
+          open={open}
+          style={{ paddingBottom: 50, paddingRight: 10, zIndex: 2 }}
+          visible
+          icon={open ? 'close' : 'progress-pencil'}
+          actions={[
+            {
+              icon: 'content-copy',
+              label: 'Copy Room Code',
+              onPress: () => copyCode(),
+            },
+            {
+              icon: 'home-variant-outline',
+              label: 'Back to Home',
+              onPress: () => backToHome(),
+            },
+          ]}
+          onStateChange={onStateChange}
+          onPress={() => {
+            if (open) {
+              // do something if the speed dial is open
+            }
+          }}
+        />
+      }
+
     </>
   );
 }
 
-const modalStyles = StyleSheet.create({
-  modal: {
-    width: Dimensions.get('window').width - 40,
-    padding: 20,
-    marginRight: 20,
-  },
-  container: {
-    width: Dimensions.get('window').width - 40,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    overflow: 'scroll',
-    justifyContent: 'space-around',
-    gap: 15,
-    maxHeight: 470,
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingLeft: 25,
-    paddingRight: 25,
-    backgroundColor: 'white',
-    borderRadius: 20,
-  },
-  card: {
-    width: '100%',
-    flexDirection: 'column',
-    gap: 10,
-    padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-  },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 15,
-  },
-  addButton: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#898989',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    marginTop: 150,
   },
   bgImg: {
-    flex: 1,
-    resizeMode: 'cover',
+    position: 'absolute',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+    zIndex: -1
   },
   tilesContainer: {
     flex: 1,

@@ -2,14 +2,12 @@ import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 const GameCard = ({ title, onPress, size }) => {
-
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Text style={styles.title}>{title}</Text>
       {
-        size === '3' ? <Text style={styles.description}>3 X 3</Text> : <Text style={styles.description}>4 X 4</Text>
+        size === 3 ? <Text style={styles.description}>3 X 3</Text> : <Text style={styles.description}>4 X 3</Text>
       }
-
     </TouchableOpacity>
   );
 };
@@ -35,8 +33,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    // fontWeight: 'bold',
   },
   description: {
     fontSize: 16,

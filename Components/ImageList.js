@@ -1,9 +1,11 @@
-import React from 'react';
-import { StyleSheet, Image, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, View, TouchableOpacity, Alert } from 'react-native';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
-import { Dimensions } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper'
+import { Ionicons } from '@expo/vector-icons';
+import modalStyles from '../Styles/ModalStyle';
 
 const uploadImageToFirebase = async (uri) => {
   const response = await fetch(uri);
@@ -18,8 +20,15 @@ const uploadImageToFirebase = async (uri) => {
 
 const ImageList = ({
   imageList,
-  setImageList,
+  setAddImageVisible,
+  setImageDetailVisible,
+  setImageListVisible,
+  setCurrentImage,
+  setUploadImages,
+  handleImageListDismiss
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleButtonPress = () => {
     Alert.alert(
       'Select an option',
@@ -27,21 +36,31 @@ const ImageList = ({
       [
         {
           text: 'Take Photo', onPress: async () => {
+            setIsLoading(true);
             const tmpUri = await handleTakePhoto();
             if (!tmpUri) return;
             const uri = await uploadImageToFirebase(tmpUri);
-            setImageList([...imageList, uri]);
+            setUploadImages([uri]);
+            setIsLoading(false);
+            setImageListVisible(false);
+            // handleImageListDismiss();
+            setAddImageVisible(true);
           }
         },
         {
           text: 'Choose from Library', onPress: async () => {
+            setIsLoading(true);
             const tmpUris = await handleSelectImage();
             if (!tmpUris) return;
             for (let i = 0; i < tmpUris.length; i++) {
               const uri = await uploadImageToFirebase(tmpUris[i]);
               tmpUris[i] = uri;
             }
-            setImageList([...imageList, ...tmpUris]);
+            setUploadImages(tmpUris);
+            setIsLoading(false);
+            setImageListVisible(false);
+            // handleImageListDismiss();
+            setAddImageVisible(true);
           }
         },
         { text: 'Cancel', style: 'cancel' },
@@ -54,67 +73,23 @@ const ImageList = ({
     <View style={modalStyles.container}>
       {
         imageList.map((image, index) => {
-          console.log(image);
           return <TouchableOpacity key={index} onPress={() => {
-            setModalContent(ImageDetail)
+            setCurrentImage(image);
+            setImageDetailVisible(true);
+            setImageListVisible(false);
           }}>
-            <Image source={{ uri: image }} style={modalStyles.image} />
+            <Image source={{ uri: image.uri }} style={modalStyles.image} />
           </TouchableOpacity>
         })
       }
-      <TouchableOpacity onPress={handleButtonPress}>
-        <Image source={{
-          uri: 'assets/SVG/add.svg'
-        }} style={modalStyles.addButton} />
+      <TouchableOpacity onPress={handleButtonPress} style={modalStyles.addButton}>
+        {
+          isLoading ? <ActivityIndicator size="large" /> : <Ionicons name="add-outline" size={120} color="#898989" />
+        }
+
       </TouchableOpacity>
     </View>
   )
 }
-
-const modalStyles = StyleSheet.create({
-  modal: {
-    width: Dimensions.get('window').width - 40,
-    padding: 20,
-    marginRight: 20,
-  },
-  container: {
-    width: Dimensions.get('window').width - 40,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    overflow: 'scroll',
-    justifyContent: 'space-around',
-    gap: 15,
-    maxHeight: 470,
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingLeft: 25,
-    paddingRight: 25,
-    backgroundColor: 'white',
-    borderRadius: 20,
-  },
-  card: {
-    width: '100%',
-    flexDirection: 'column',
-    gap: 10,
-    padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-  },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 15,
-  },
-  addButton: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#898989',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default ImageList;
