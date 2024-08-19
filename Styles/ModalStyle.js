@@ -48,7 +48,7 @@ export default modalStyles = StyleSheet.create({
   addButton: {
     width: 120,
     height: 120,
-    backgroundColor: '#b9b9b9',
+    backgroundColor: '#f0f0f0',
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',

@@ -82,7 +82,7 @@ const ImageList = ({
       }
       <TouchableOpacity onPress={handleButtonPress} style={modalStyles.addButton}>
         {
-          isLoading ? <ActivityIndicator size={40} /> : <Ionicons name="add-outline" size={120} color="#898989" />
+          isLoading ? <ActivityIndicator size={40} /> : <Ionicons name="add-outline" size={110} color="#999999" />
         }
 
       </TouchableOpacity>
