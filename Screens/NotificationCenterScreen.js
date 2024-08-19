@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Button, Alert, StyleSheet, Platform } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker'; // Import DropDownPicker
-import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore'; // Import necessary Firestore methods
-import { db } from '../Firebase/FirebaseSetup'; // Ensure you're importing your Firestore setup
+import { View, Text, Alert, StyleSheet, Platform, TouchableOpacity } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../Firebase/FirebaseSetup';
 import * as Notifications from 'expo-notifications';
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -14,32 +14,30 @@ const NotificationCenterScreen = () => {
   const [selectedGame, setSelectedGame] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [open, setOpen] = useState(false); // State for DropdownPicker
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserGames = async () => {
       if (user && user.uid) {
-        console.log("User UID:", user.uid);
         try {
           const gamesQuery = query(
             collection(db, "games"),
-            where("creater", "==", user.uid) // Ensure field name matches Firestore
+            where("creater", "==", user.uid)
           );
           const gamesSnapshot = await getDocs(gamesQuery);
-  
+
           if (gamesSnapshot.empty) {
             console.log("No games found for this user.");
           } else {
             const gamesData = [];
             gamesSnapshot.forEach((doc) => {
               const gameData = doc.data();
-              console.log("Game Data Fetched:", gameData); // Log the fetched data
-              gamesData.push({ 
-                label: gameData.createrName || "Unnamed Game", // Use createrName or a default
-                value: doc.id 
-              }); // Use doc.id as the value for uniqueness
+              gamesData.push({
+                label: gameData.createrName || "Unnamed Game",
+                value: doc.id,
+              });
             });
-  
+
             setGames(gamesData);
           }
         } catch (error) {
@@ -50,9 +48,9 @@ const NotificationCenterScreen = () => {
         console.log("No user found in context.");
       }
     };
-  
+
     fetchUserGames();
-  }, [user]);  
+  }, [user]);
 
   const onChangeDateTime = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -125,17 +123,26 @@ const NotificationCenterScreen = () => {
         placeholder="Select a game"
         containerStyle={styles.dropdownContainer}
         style={styles.dropdown}
-        dropDownStyle={styles.dropdownItem}
+        dropDownContainerStyle={styles.dropdownContainerStyle}
+        placeholderStyle={styles.placeholderStyle}
+        labelStyle={styles.labelStyle}
+        selectedItemLabelStyle={styles.selectedItemLabelStyle}
       />
 
       <View style={styles.dateTimeContainer}>
         {Platform.OS === 'android' ? (
           <>
-            <Button title="Pick Date" onPress={showDatePickerAndroid} />
-            <Button title="Pick Time" onPress={showTimePickerAndroid} />
+            <TouchableOpacity style={styles.button} onPress={showDatePickerAndroid}>
+              <Text style={styles.buttonText}>Pick Date</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={showTimePickerAndroid}>
+              <Text style={styles.buttonText}>Pick Time</Text>
+            </TouchableOpacity>
           </>
         ) : (
-          <Button title="Pick Date & Time" onPress={showDateTimePickerIOS} />
+          <TouchableOpacity style={styles.button} onPress={showDateTimePickerIOS}>
+            <Text style={styles.buttonText}>Pick Date & Time</Text>
+          </TouchableOpacity>
         )}
         {showDatePicker && Platform.OS === 'ios' && (
           <DateTimePicker
@@ -149,7 +156,9 @@ const NotificationCenterScreen = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button title="SCHEDULE NOTIFICATION" onPress={scheduleNotification} />
+        <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
+          <Text style={styles.confirmButtonText}>SCHEDULE NOTIFICATION</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -160,22 +169,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#6A4C9C',
   },
   dropdownContainer: {
     marginBottom: 20,
   },
   dropdown: {
-    backgroundColor: '#fafafa',
+    backgroundColor: '#ffffff',
+    borderColor: '#cccccc',
   },
-  dropdownItem: {
-    backgroundColor: '#fafafa',
+  dropdownContainerStyle: {
+    backgroundColor: '#f0f0f0',  // 下拉列表背景色
+  },
+  placeholderStyle: {
+    color: '#999999', 
+    fontSize: 16,
+  },
+  labelStyle: {
+    color: '#333333', 
+    fontSize: 16,
+    fontSize: 16,
+    fontFamily: 'Helvetica', 
+  },
+  selectedItemLabelStyle: {
+    color: '#6A4C9C',
+    fontWeight: 'bold',
+    fontFamily: 'Courier New',
   },
   dateTimeContainer: {
     marginBottom: 30,
@@ -186,6 +212,33 @@ const styles = StyleSheet.create({
   },
   dateTimePicker: {
     width: '100%',
+  },
+  button: {
+    backgroundColor: '#6A4C9C', 
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25, 
+    marginBottom: 10,
+    width: '80%',
+  },
+  buttonText: {
+    color: '#ffffff',  
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#993399',  
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25, 
+    width: '80%',
+  },
+  confirmButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
