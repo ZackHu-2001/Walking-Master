@@ -1,5 +1,5 @@
-import { FAB, Portal } from 'react-native-paper';
-import React, { useEffect } from 'react';
+import { FAB } from 'react-native-paper';
+import React from 'react';
 
 const FloatingActionButton = ({ addNewGame, addRoom, editRoom }) => {
   const [open, setOpen] = React.useState(false);
@@ -8,7 +8,7 @@ const FloatingActionButton = ({ addNewGame, addRoom, editRoom }) => {
   return (
     <FAB.Group
       open={open}
-      style={{ paddingBottom: 50, paddingRight: 10, }}
+      style={{ paddingBottom: 50, paddingRight: 10, zIndex: 2 }}
       visible
       icon={open ? 'close' : 'plus'}
       actions={[
