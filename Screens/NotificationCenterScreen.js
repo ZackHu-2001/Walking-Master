@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Alert, StyleSheet, Platform, TouchableOpacity, Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient'; 
 import DropDownPicker from 'react-native-dropdown-picker';
-import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 import * as Notifications from 'expo-notifications';
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
@@ -15,7 +16,7 @@ const NotificationCenterScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0]; // 初始透明度设为0
+  const fadeAnim = useState(new Animated.Value(0))[0]; // 0 is the initial value
 
   useEffect(() => {
     // fade in animation when loading
@@ -120,69 +121,76 @@ const NotificationCenterScreen = () => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Select Game to Set Notification:</Text>
-      </View>
+    <LinearGradient
+      colors={['#7DB9DE', '#77428D']} 
+      style={styles.container}
+    >
+      <Animated.View style={[styles.innerContainer, { opacity: fadeAnim }]}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Select Game to Set Notification:</Text>
+        </View>
 
-      <DropDownPicker
-        open={open}
-        value={selectedGame}
-        items={games}
-        setOpen={setOpen}
-        setValue={setSelectedGame}
-        setItems={setGames}
-        placeholder="Select a game"
-        containerStyle={styles.dropdownContainer}
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropdownContainerStyle}
-        placeholderStyle={styles.placeholderStyle}
-        labelStyle={styles.labelStyle}
-        textStyle={styles.textStyle}
-        selectedItemLabelStyle={styles.selectedItemLabelStyle}
-      />
+        <DropDownPicker
+          open={open}
+          value={selectedGame}
+          items={games}
+          setOpen={setOpen}
+          setValue={setSelectedGame}
+          setItems={setGames}
+          placeholder="Select a game"
+          containerStyle={styles.dropdownContainer}
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainerStyle}
+          placeholderStyle={styles.placeholderStyle}
+          labelStyle={styles.labelStyle}
+          textStyle={styles.textStyle}
+          selectedItemLabelStyle={styles.selectedItemLabelStyle}
+        />
 
-      <View style={styles.dateTimeContainer}>
-        {Platform.OS === 'android' ? (
-          <>
-            <TouchableOpacity style={styles.button} onPress={showDatePickerAndroid}>
-              <Text style={styles.buttonText}>Pick Date</Text>
+        <View style={styles.dateTimeContainer}>
+          {Platform.OS === 'android' ? (
+            <>
+              <TouchableOpacity style={styles.button} onPress={showDatePickerAndroid}>
+                <Text style={styles.buttonText}>Pick Date</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={showTimePickerAndroid}>
+                <Text style={styles.buttonText}>Pick Time</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={showDateTimePickerIOS}>
+              <Text style={styles.buttonText}>Pick Date & Time</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={showTimePickerAndroid}>
-              <Text style={styles.buttonText}>Pick Time</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={showDateTimePickerIOS}>
-            <Text style={styles.buttonText}>Pick Date & Time</Text>
+          )}
+          {showDatePicker && Platform.OS === 'ios' && (
+            <DateTimePicker
+              value={date}
+              mode="datetime"
+              display="default"
+              onChange={onChangeDateTime}
+              style={styles.dateTimePicker}
+            />
+          )}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
+            <Text style={styles.confirmButtonText}>SCHEDULE NOTIFICATION</Text>
           </TouchableOpacity>
-        )}
-        {showDatePicker && Platform.OS === 'ios' && (
-          <DateTimePicker
-            value={date}
-            mode="datetime"
-            display="default"
-            onChange={onChangeDateTime}
-            style={styles.dateTimePicker}
-          />
-        )}
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
-          <Text style={styles.confirmButtonText}>SCHEDULE NOTIFICATION</Text>
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
+        </View>
+      </Animated.View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  innerContainer: {
+    flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#ffffff',
   },
   titleContainer: {
     width: '80%',
