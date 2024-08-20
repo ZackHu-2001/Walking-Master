@@ -38,7 +38,7 @@ export default function GameBoardScreen({ navigation }) {
 
   const handleSwipeRight = async (gameId) => {
     try {
-      await removeGameFromUser(user.uid, gameId);
+      await removeGame(user.uid, gameId);
       console.log(`Game ${gameId} removed from user collection`);
 
       // manually remove the game from the games state

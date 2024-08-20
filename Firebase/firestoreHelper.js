@@ -59,7 +59,6 @@ export const removeGame = async (userId, gameId) => {
     await updateDoc(userDocRef, {
       games: arrayRemove(gameId),
     });
-    console.log(`Game ${gameId} removed from user collection`);
   } catch (error) {
     console.error("Error removing game from user:", error);
   }
