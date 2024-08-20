@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -48,10 +48,12 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
       onHandlerStateChange={editMode ? onHandlerStateChange : null}
     >
       <Animated.View style={[styles.card, { transform: [{ translateX }] }]}>
-        <Text style={styles.title}>{title}</Text>
-        <Animated.Text style={[styles.description, { opacity: textOpacity }]}>
-          {size === 3 ? '3 X 3' : '4 X 3'}
-        </Animated.Text>
+        <TouchableOpacity onPress={onPress} style={styles.cardContent}>
+          <Text style={styles.title}>{title}</Text>
+          <Animated.Text style={[styles.description, { opacity: textOpacity }]}>
+            {size === 3 ? '3 X 3' : '4 X 3'}
+          </Animated.Text>
+        </TouchableOpacity>
         {editMode && (
           <Animated.View style={[styles.deleteButton, { opacity: translateX.interpolate({ inputRange: [MAX_TRANSLATE_X, 0], outputRange: [1, 0] }) }]}>
             <Icon name="trash" size={30} color="red" onPress={onSwipeRight} />
@@ -64,7 +66,6 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
 
 const styles = StyleSheet.create({
   card: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -82,9 +83,14 @@ const styles = StyleSheet.create({
     margin: 10,
     overflow: 'hidden',
   },
+  cardContent: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+  },
   title: {
     fontSize: 18,
-    flex: 1, 
+    flex: 1,
   },
   description: {
     fontSize: 16,
