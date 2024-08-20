@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const SWIPE_THRESHOLD = -100;
+const SWIPE_THRESHOLD = -50; 
+const MAX_TRANSLATE_X = -75; // limit sliding distance
 
 const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
   const translateX = new Animated.Value(0);
-  const textOpacity = new Animated.Value(1); // 新增：用于控制文本的透明度
+  const textOpacity = new Animated.Value(1);
 
   const onGestureEvent = Animated.event(
     [{ nativeEvent: { translationX: translateX } }],
@@ -19,23 +20,22 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
       const { translationX } = event.nativeEvent;
 
       if (translationX < SWIPE_THRESHOLD) {
-        Animated.timing(translateX, {
-          toValue: -150, // Slide the item far enough to reveal the delete icon
-          duration: 300,
+        Animated.spring(translateX, {
+          toValue: MAX_TRANSLATE_X, // limit the swipe distance
           useNativeDriver: true,
         }).start();
         Animated.timing(textOpacity, {
-          toValue: 0, // 隐藏文本
+          toValue: 0, // hide the text
           duration: 300,
           useNativeDriver: true,
         }).start();
       } else {
         Animated.spring(translateX, {
-          toValue: 0,
+          toValue: 0, // slide back to initial position
           useNativeDriver: true,
         }).start();
         Animated.spring(textOpacity, {
-          toValue: 1, // 恢复文本
+          toValue: 1, // show text
           useNativeDriver: true,
         }).start();
       }
@@ -44,7 +44,7 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
 
   return (
     <PanGestureHandler
-      onGestureEvent={editMode ? onGestureEvent : null}  // 仅在编辑模式启用手势
+      onGestureEvent={editMode ? onGestureEvent : null} // only enable gesture when in Game Board Screen edit mode
       onHandlerStateChange={editMode ? onHandlerStateChange : null}
     >
       <Animated.View style={[styles.card, { transform: [{ translateX }] }]}>
@@ -53,7 +53,7 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
           {size === 3 ? '3 X 3' : '4 X 3'}
         </Animated.Text>
         {editMode && (
-          <Animated.View style={[styles.deleteButton, { opacity: translateX.interpolate({ inputRange: [-150, 0], outputRange: [1, 0] }) }]}>
+          <Animated.View style={[styles.deleteButton, { opacity: translateX.interpolate({ inputRange: [MAX_TRANSLATE_X, 0], outputRange: [1, 0] }) }]}>
             <Icon name="trash" size={30} color="red" onPress={onSwipeRight} />
           </Animated.View>
         )}
@@ -84,16 +84,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+    flex: 1, 
   },
   description: {
     fontSize: 16,
     color: '#666',
+    marginRight: 10,
+    textAlign: 'right',
   },
   deleteButton: {
     position: 'absolute',
     right: 20,
-    top: 10,
-    bottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: 50,
