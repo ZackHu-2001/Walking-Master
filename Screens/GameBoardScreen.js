@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { View, Button, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import GameCard from '../Components/GameCard';
-import { getGames, getUser, listenForGames } from '../Firebase/firestoreHelper';
+import { getGames, getUser, listenForGames,removeGame } from '../Firebase/firestoreHelper';
 import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal, ActivityIndicator, Portal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
@@ -17,12 +17,13 @@ export default function GameBoardScreen({ navigation }) {
   const [modalContent, setModalContent] = React.useState(1);
   const { user } = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   const editRoom = () => {
-
+    setEditMode(!editMode);
   }
 
   const addNewGame = () => {
@@ -34,6 +35,19 @@ export default function GameBoardScreen({ navigation }) {
     setModalContent(0);
     showModal();
   }
+
+  const handleSwipeRight = async (gameId) => {
+    try {
+      await removeGame(user.uid, gameId);
+      console.log(`Game ${gameId} removed from user collection`);
+
+      // manually remove the game from the games state
+      setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+    } catch (error) {
+      console.error("Error removing game from user:", error);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     let unsubscribeFunction = null;
@@ -57,6 +71,7 @@ export default function GameBoardScreen({ navigation }) {
         const unsubscribe = onSnapshot(userGamesQuery, (snapshot) => {
           const games = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           console.log(games)
+          const filteredGames = games.filter(game => userInfo.games.includes(game.id));
           setGames(games);
           setIsLoading(false);
         }, (error) => {
@@ -108,6 +123,8 @@ export default function GameBoardScreen({ navigation }) {
                   title={`${game['createrName']}'s route`}
                   size={game['size']}
                   onPress={() => navigation.navigate('Game', { gameId: game['id'] })}
+                  onSwipeRight={editMode ? () => handleSwipeRight(game['id']) : null} 
+                  editMode={editMode}
                 />
               ))
             }
