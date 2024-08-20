@@ -12,7 +12,6 @@ import { ContextProvider } from './Context/context';
 import GameScreen from './Screens/GameScreen';
 import LoginScreen from './Screens/LogInScreen';
 import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
-import Map from './Screens/Map';
 import SignupScreen from './Screens/SignUpScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LocationSearchScreen from './Screens/LocationSearchScreen';
@@ -47,13 +46,12 @@ export default function App() {
                     <Stack.Screen name="GameBoard" component={BottomTabNavigator} options={{ headerShown: false }} />
                     <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
                     <Stack.Screen name="Game" component={GameScreen} />
-                    <Stack.Screen name="Map" component={Map} />
                     <Stack.Screen name="LocationSelect" component={LocationSearchScreen} />
                     <Stack.Screen name="InteractiveMap" component={InteractiveMap} />
-                    </> : <>
-                      <Stack.Screen name="Login" component={LoginScreen} />
-                      <Stack.Screen name="Signup" component={SignupScreen} />
-                      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+                  </> : <>
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Signup" component={SignupScreen} />
+                    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                   </>
                 }
               </Stack.Navigator>
