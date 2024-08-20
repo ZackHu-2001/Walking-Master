@@ -1,9 +1,10 @@
 import React, { useEffect, useContext } from 'react'
-import { Image, View, Text, ScrollView, TextInput, Alert } from 'react-native'
+import { Image, View, Text, ScrollView, TextInput, Alert, TouchableOpacity } from 'react-native'
 import { ActivityIndicator, Button } from 'react-native-paper'
 import modalStyles from '../Styles/ModalStyle'
 import { getUser, getCommentThroughRef, updateCommentThroughRef } from '../Firebase/firestoreHelper'
 import Context from '../Context/context'
+import { Ionicons } from '@expo/vector-icons'
 
 const Comment = ({ content, creater, orientation }) => {
   const [createrInfo, setCreaterInfo] = React.useState(null);
@@ -35,6 +36,7 @@ const Comment = ({ content, creater, orientation }) => {
 const ImageDetail = ({
   currentImage,
   setImageDetailVisible,
+  navigation,
 }) => {
   const [comments, setComments] = React.useState([])
   const [comment, setComment] = React.useState(null);
@@ -72,20 +74,54 @@ const ImageDetail = ({
   return (
     <View style={[modalStyles.detailImageContainer, focus && modalStyles.focus]}>
 
-      <Image source={{
-        uri: currentImage.uri
-      }} style={modalStyles.detailImage} />
+      <View style={modalStyles.detailImage} >
+        <ActivityIndicator size={60} style={modalStyles.largeImageLoading} />
+        <Image source={{
+          uri: currentImage.uri
+        }} style={modalStyles.detailImage} />
+      </View>
+
+      <TouchableOpacity onPress={() => {
+        navigation.navigate('InteractiveMap', { location: currentImage.location })
+      }}
+        style={{
+          width: '100%', display: 'flex', flexDirection: 'row',
+          alignItems: 'center'
+        }}>
+
+        <Ionicons name="location-outline" size={30} />
+        {
+          currentImage.location &&
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ marginLeft: 10, width: '80%' }}>
+            {currentImage.location.name + ' | ' + currentImage.location.address}
+          </Text>
+        }
+
+      </TouchableOpacity>
 
       {
-        !focus && <View style={{ height: 120, display: 'flex', width: '90%' }}>
-          <ScrollView style={modalStyles.scrollView} contentContainerStyle={{ alignItems: 'flex-start' }}>
+        comments === null && <ActivityIndicator style={{ marginTop: 10 }} />
+      }
+      {
+        comments !== null &&
+          comments.length === 0 ? <Text style={{ color: '#4f4f4f', paddingTop: 10, paddingBottom: 10 }}>No comments yet, add your first comment~</Text> :
+          <>
             {
-              comments && comments.map((comment, index) => {
-                return <Comment key={index} content={comment.content} creater={comment.creater} />
-              })
+              !focus && <View style={{ height: 80, display: 'flex', width: '90%' }}>
+
+                <ScrollView style={modalStyles.scrollView} contentContainerStyle={{ alignItems: 'flex-start' }}>
+                  {
+                    comments && comments.map((comment, index) => {
+                      return <Comment key={index} content={comment.content} creater={comment.creater} />
+                    })
+                  }
+                </ScrollView>
+              </View>
             }
-          </ScrollView>
-        </View>
+          </>
       }
 
 

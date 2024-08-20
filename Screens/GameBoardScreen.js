@@ -98,36 +98,6 @@ export default function GameBoardScreen({ navigation }) {
     };
   }, [user]);
 
-  // useEffect(() => {
-  //   if (!user) return;
-  //   let unsubscribeFunction = null;
-
-  //   setIsLoading(true);
-  //   const fetchGames = async () => {
-  //     try {
-  //       const userInfo = await getUser(user.uid);
-  //       const unsubscribe = listenForGames(userInfo.games, (games) => {
-  //         setGames(games);
-  //       });
-  //       return unsubscribe;
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-
-  //   const unsubscribe = fetchGames().then((unsubscribe) => {
-  //     unsubscribeFunction = unsubscribe;
-  //     setIsLoading(false);
-  //   });
-
-  //   // Cleanup subscription on unmount
-  //   return () => {
-  //     if (typeof unsubscribeFunction === 'function') {
-  //       unsubscribeFunction();
-  //     }
-  //   };
-  // }, [user]);
-
   navigateToGame = (gameId) => {
     navigation.navigate('Game', { gameId });
   }

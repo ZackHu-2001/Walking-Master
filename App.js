@@ -15,6 +15,8 @@ import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
 import Map from './Screens/Map';
 import SignupScreen from './Screens/SignUpScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import LocationSearchScreen from './Screens/LocationSearchScreen';
+import InteractiveMap from './Screens/InteractiveMap';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +48,8 @@ export default function App() {
                     <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
                     <Stack.Screen name="Game" component={GameScreen} />
                     <Stack.Screen name="Map" component={Map} />
+                    <Stack.Screen name="LocationSelect" component={LocationSearchScreen} />
+                    <Stack.Screen name="InteractiveMap" component={InteractiveMap} />
                     </> : <>
                       <Stack.Screen name="Login" component={LoginScreen} />
                       <Stack.Screen name="Signup" component={SignupScreen} />
@@ -57,7 +61,7 @@ export default function App() {
           </PaperProvider>
         </AuthStateListener>
       </ContextProvider>
-     </GestureHandlerRootView>
+    </GestureHandlerRootView>
   );
 }
 
