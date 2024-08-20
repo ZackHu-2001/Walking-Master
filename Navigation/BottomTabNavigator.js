@@ -2,7 +2,6 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GameBoardScreen from '../Screens/GameBoardScreen';
-import CreateRoomScreen from '../Screens/CreateRoomScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();

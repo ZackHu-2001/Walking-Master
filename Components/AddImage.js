@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons'
 import { addComment } from '../Firebase/firestoreHelper'
 import modalStyles from '../Styles/ModalStyle'
 import Context from '../Context/context'
-import * as Location from 'expo-location';
 
 const AddImage = ({
   navigation,
