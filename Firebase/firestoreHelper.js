@@ -1,7 +1,7 @@
 import { db } from "./FirebaseSetup";
 import {
   onSnapshot, collection, addDoc, deleteDoc, setDoc,
-  doc, updateDoc, getDocs, getDoc, documentId
+  doc, updateDoc, getDocs, getDoc, documentId, query, where, arrayRemove
 } from "firebase/firestore";
 
 export const getGames = async (ids = []) => {
@@ -53,9 +53,17 @@ export const addGame = async (game) => {
   }
 }
 
-export const deleteGame = async (id) => {
-  return await deleteDoc(doc(db, "games", id));
-}
+export const removeGame = async (userId, gameId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      games: arrayRemove(gameId),
+    });
+    console.log(`Game ${gameId} removed from user collection`);
+  } catch (error) {
+    console.error("Error removing game from user:", error);
+  }
+};
 
 export const getCommentThroughRef = async (commentRef) => {
 

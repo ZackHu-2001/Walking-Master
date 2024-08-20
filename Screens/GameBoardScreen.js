@@ -1,14 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { View, Button, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import GameCard from '../Components/GameCard';
-import { getGames, getUser, listenForGames } from '../Firebase/firestoreHelper';
+import { getGames, getUser, listenForGames,removeGame } from '../Firebase/firestoreHelper';
 import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal, ActivityIndicator, Portal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
 import AddRoom from '../Components/ModalContent/AddRoom';
 import Context from '../Context/context';
 import LocationManager from '../Components/LocationManager';
-import { collection, query, where, onSnapshot, documentId, doc, updateDoc, arrayRemove } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, documentId } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 
 export default function GameBoardScreen({ navigation }) {
@@ -38,10 +38,7 @@ export default function GameBoardScreen({ navigation }) {
 
   const handleSwipeRight = async (gameId) => {
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      await updateDoc(userDocRef, {
-        games: arrayRemove(gameId),
-      });
+      await removeGameFromUser(user.uid, gameId);
       console.log(`Game ${gameId} removed from user collection`);
 
       // manually remove the game from the games state
