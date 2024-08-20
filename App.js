@@ -13,6 +13,7 @@ import GameScreen from './Screens/GameScreen';
 import LoginScreen from './Screens/LogInScreen';
 import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
 import SignupScreen from './Screens/SignUpScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LocationSearchScreen from './Screens/LocationSearchScreen';
 import InteractiveMap from './Screens/InteractiveMap';
 
@@ -34,29 +35,31 @@ export default function App() {
   }, []);
 
   return (
-    <ContextProvider>
-      <AuthStateListener>
-        <PaperProvider>
-          <NavigationContainer>
-            <Stack.Navigator>
-              {
-                isUserAuthenticated ? <>
-                  <Stack.Screen name="GameBoard" component={BottomTabNavigator} options={{ headerShown: false }} />
-                  <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
-                  <Stack.Screen name="Game" component={GameScreen} />
-                  <Stack.Screen name="LocationSelect" component={LocationSearchScreen} />
-                  <Stack.Screen name="InteractiveMap" component={InteractiveMap} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ContextProvider>
+        <AuthStateListener>
+          <PaperProvider>
+            <NavigationContainer>
+              <Stack.Navigator>
+                {
+                  isUserAuthenticated ? <>
+                    <Stack.Screen name="GameBoard" component={BottomTabNavigator} options={{ headerShown: false }} />
+                    <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} />
+                    <Stack.Screen name="Game" component={GameScreen} />
+                    <Stack.Screen name="LocationSelect" component={LocationSearchScreen} />
+                    <Stack.Screen name="InteractiveMap" component={InteractiveMap} />
                   </> : <>
                     <Stack.Screen name="Login" component={LoginScreen} />
                     <Stack.Screen name="Signup" component={SignupScreen} />
                     <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                </>
-              }
-            </Stack.Navigator>
-          </NavigationContainer>
-        </PaperProvider>
-      </AuthStateListener>
-    </ContextProvider>
+                  </>
+                }
+              </Stack.Navigator>
+            </NavigationContainer>
+          </PaperProvider>
+        </AuthStateListener>
+      </ContextProvider>
+    </GestureHandlerRootView>
   );
 }
 
