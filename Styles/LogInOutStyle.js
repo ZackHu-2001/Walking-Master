@@ -7,6 +7,21 @@ export default styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
   },
+  bigtitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 30,
+    fontFamily: 'Roboto', // Adjust font as needed
+  },
+  description: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 30,
+    textAlign: 'left',
+    fontFamily: 'Roboto', // Adjust font as needed
+  },
   title: {
     fontSize: 24,
     color: '#6a0dad',

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/FirebaseSetup';
 import styles from '../Styles/LogInOutStyle';
@@ -7,17 +7,30 @@ import styles from '../Styles/LogInOutStyle';
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity is 0
 
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
-  }, []);
+
+    // Trigger the fade-in animation when the screen loads
+    Animated.timing(fadeAnim, {
+      toValue: 1, // Final opacity
+      duration: 1000, // Duration of the animation in milliseconds
+      easing: Easing.ease, // Easing function
+      useNativeDriver: true, // Use native driver for better performance
+    }).start();
+  }, [fadeAnim]);
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <Text style={styles.bigtitle}>Welcome to Walking Master</Text>
+      <Text style={styles.description}>
+        Log in or sign up to 
+        record your adventure.
+      </Text>
       <Text style={styles.title}>Login</Text>
-
       <View style={styles.inputContainer}>
         <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
         <TextInput
@@ -50,6 +63,7 @@ const LoginScreen = ({ navigation }) => {
           .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
+            // Add any additional logic here
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -69,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.link}>Forgot Password?</Text>
       </TouchableOpacity>
 
-    </View>
+    </Animated.View>
   );
 };
 
