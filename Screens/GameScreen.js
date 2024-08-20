@@ -8,8 +8,6 @@ import ImageList from "../Components/ImageList";
 import modalStyles from "../Styles/ModalStyle";
 import AddImage from "../Components/AddImage";
 import ImageDetail from "../Components/ImageDetail";
-// import LocationManager from "../LocationManager";
-// import Clipboard from '@react-native-clipboard/clipboard';
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
@@ -118,12 +116,12 @@ const GameScreen = ({ navigation }) => {
       </Modal>
 
       <Modal visible={imageDetailVisible} onDismiss={handleImageDetailDismiss} contentContainerStyle={modalStyles.modal}>
-        <ImageDetail currentImage={currentImage} setImageDetailVisible={setImageDetailVisible}
+        <ImageDetail currentImage={currentImage} setImageDetailVisible={setImageDetailVisible} navigation={navigation}
           uploadImages={uploadImages} setImageList={setImageList} />
       </Modal>
 
       <Modal visible={addImageVisible} onDismiss={handleAddImageDismiss} contentContainerStyle={modalStyles.modal}>
-        <AddImage uploadImages={uploadImages} setImageList={setImageList}
+        <AddImage uploadImages={uploadImages} setImageList={setImageList} navigation={navigation}
           handleAddImageDismiss={handleAddImageDismiss} setImageListVisible={setImageListVisible} />
       </Modal>
 
