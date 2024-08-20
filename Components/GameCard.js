@@ -1,14 +1,64 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const GameCard = ({ title, onPress, size }) => {
-  return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Text style={styles.title}>{title}</Text>
-      {
-        size === 3 ? <Text style={styles.description}>3 X 3</Text> : <Text style={styles.description}>4 X 3</Text>
+const SWIPE_THRESHOLD = -100;
+
+const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
+  const translateX = new Animated.Value(0);
+  const textOpacity = new Animated.Value(1); // 新增：用于控制文本的透明度
+
+  const onGestureEvent = Animated.event(
+    [{ nativeEvent: { translationX: translateX } }],
+    { useNativeDriver: true }
+  );
+
+  const onHandlerStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      const { translationX } = event.nativeEvent;
+
+      if (translationX < SWIPE_THRESHOLD) {
+        Animated.timing(translateX, {
+          toValue: -150, // Slide the item far enough to reveal the delete icon
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+        Animated.timing(textOpacity, {
+          toValue: 0, // 隐藏文本
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        Animated.spring(translateX, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+        Animated.spring(textOpacity, {
+          toValue: 1, // 恢复文本
+          useNativeDriver: true,
+        }).start();
       }
-    </TouchableOpacity>
+    }
+  };
+
+  return (
+    <PanGestureHandler
+      onGestureEvent={editMode ? onGestureEvent : null}  // 仅在编辑模式启用手势
+      onHandlerStateChange={editMode ? onHandlerStateChange : null}
+    >
+      <Animated.View style={[styles.card, { transform: [{ translateX }] }]}>
+        <Text style={styles.title}>{title}</Text>
+        <Animated.Text style={[styles.description, { opacity: textOpacity }]}>
+          {size === 3 ? '3 X 3' : '4 X 3'}
+        </Animated.Text>
+        {editMode && (
+          <Animated.View style={[styles.deleteButton, { opacity: translateX.interpolate({ inputRange: [-150, 0], outputRange: [1, 0] }) }]}>
+            <Icon name="trash" size={30} color="red" onPress={onSwipeRight} />
+          </Animated.View>
+        )}
+      </Animated.View>
+    </PanGestureHandler>
   );
 };
 
@@ -34,11 +84,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    // fontWeight: 'bold',
   },
   description: {
     fontSize: 16,
     color: '#666',
+  },
+  deleteButton: {
+    position: 'absolute',
+    right: 20,
+    top: 10,
+    bottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
   },
 });
 
