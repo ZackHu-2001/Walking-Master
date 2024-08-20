@@ -10,10 +10,7 @@ const LoginScreen = ({ navigation }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const fadeTitleAnim = useRef(new Animated.Value(0)).current;
-  const fadeDescriptionAnim = useRef(new Animated.Value(0)).current;
-  const fadeLoginAnim = useRef(new Animated.Value(0)).current;
-  const fadeInputsAnim = useRef(new Animated.Value(0)).current;
-  const fadeButtonAnim = useRef(new Animated.Value(0)).current;
+  const fadeGroupAnim = useRef(new Animated.Value(0)).current; // Single animation for Login, Inputs, and Button
 
   useEffect(() => {
     navigation.setOptions({
@@ -40,25 +37,7 @@ const LoginScreen = ({ navigation }) => {
         easing: Easing.ease,
         useNativeDriver: true,
       }),
-      Animated.timing(fadeDescriptionAnim, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeLoginAnim, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeInputsAnim, {
-        toValue: 1,
-        duration: 500,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeButtonAnim, {
+      Animated.timing(fadeGroupAnim, {
         toValue: 1,
         duration: 500,
         easing: Easing.ease,
@@ -86,17 +65,15 @@ const LoginScreen = ({ navigation }) => {
                 Welcome to Walking Master
               </Animated.Text>
               
-              <Animated.Text style={[styles.description, { opacity: fadeDescriptionAnim }]}>
+              <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
                 Log in or sign up to record your adventure.
               </Animated.Text>
             </>
           )}
           
-          <Animated.Text style={[styles.title, { opacity: fadeLoginAnim }]}>
-            Login
-          </Animated.Text>
-          
-          <Animated.View style={{ opacity: fadeInputsAnim }}>
+          <Animated.View style={{ opacity: fadeGroupAnim }}>
+            <Text style={styles.title}>Login</Text>
+            
             <View style={styles.inputContainer}>
               <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
               <TextInput
@@ -119,9 +96,7 @@ const LoginScreen = ({ navigation }) => {
                 onChangeText={setPassword}
               />
             </View>
-          </Animated.View>
 
-          <Animated.View style={{ opacity: fadeButtonAnim }}>
             <TouchableOpacity style={styles.button} onPress={() => {
               if (!email || !password) {
                 alert('Please fill all fields');
