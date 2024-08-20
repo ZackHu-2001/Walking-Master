@@ -1,13 +1,12 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, Button, Text, ScrollView, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import GameCard from '../Components/GameCard';
-import { getGames, getUser, listenForGames } from '../Firebase/firestoreHelper';
+import { getUser, listenForGames } from '../Firebase/firestoreHelper';
 import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal, ActivityIndicator, Portal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
 import AddRoom from '../Components/ModalContent/AddRoom';
 import Context from '../Context/context';
-import LocationManager from '../Components/LocationManager';
 import { collection, query, where, onSnapshot, documentId } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 
@@ -114,7 +113,6 @@ export default function GameBoardScreen({ navigation }) {
           </ScrollView>
       }
 
-      <LocationManager />
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle} >
           {modalContent ? <NewGame hideModal={hideModal} navigateToGame={navigateToGame} /> : <AddRoom hideModal={hideModal} />}
@@ -122,7 +120,6 @@ export default function GameBoardScreen({ navigation }) {
       </Portal>
     </>
   )
-
 }
 
 const styles = StyleSheet.create({
