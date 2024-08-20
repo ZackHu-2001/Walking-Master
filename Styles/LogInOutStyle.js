@@ -18,15 +18,16 @@ export default styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 30,
+    marginBottom: 15,
     textAlign: 'left',
     fontFamily: 'Roboto', // Adjust font as needed
   },
   title: {
     fontSize: 24,
+    fontWeight: 'bold',
     color: '#6a0dad',
     textAlign: 'center',
-    marginVertical: 20,
+    marginVertical: 10,
   },
   inputContainer: {
     marginVertical: 10,
