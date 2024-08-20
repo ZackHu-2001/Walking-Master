@@ -156,7 +156,7 @@ export default function GameBoardScreen({ navigation }) {
                   title={`${game['createrName']}'s route`}
                   size={game['size']}
                   onPress={() => navigation.navigate('Game', { gameId: game['id'] })}
-                  onSwipeRight={editMode ? () => handleSwipeRight(game['id']) : null} // 修改：仅在编辑模式启用滑动删除
+                  onSwipeRight={editMode ? () => handleSwipeRight(game['id']) : null} 
                   editMode={editMode}
                 />
               ))
