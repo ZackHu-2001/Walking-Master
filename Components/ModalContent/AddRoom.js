@@ -1,14 +1,14 @@
 import { Alert, TextInput, View, Text, StyleSheet } from "react-native";
-import React from "react";
+import { useState } from "react";
 import { Button, ActivityIndicator } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { useContext } from "react";
 import Context from "../../Context/context";
-import { checkGameExists, updateUser } from "../../Firebase/firestoreHelper";
+import { checkGameExists, updateUser, getUser } from "../../Firebase/firestoreHelper";
 
 const AddRoom = ({ hideModal }) => {
-  const [roomCode, setRoomCode] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [roomCode, setRoomCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useContext(Context);
 
   const handleAddRoom = async () => {
@@ -19,20 +19,20 @@ const AddRoom = ({ hideModal }) => {
 
     setIsLoading(true);
     // check if the room exists
-    if (!checkGameExists(roomCode)) {
-      Alert.alert("Error", "Room does not exist");
+    let exist = await checkGameExists(roomCode, user.uid);
+    if (!exist) {
+      Alert.alert("Error", "Journey does not exist");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
 
     if (user.games.includes(roomCode)) {
-      Alert.alert("Error", "Room already added");
+      Alert.alert("Error", "Journey already added");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
-
     // add the room to the user's room list
     const updatedUser = {
       ...user,
@@ -41,7 +41,7 @@ const AddRoom = ({ hideModal }) => {
 
     await updateUser(user.uid, updatedUser);
 
-    Alert.alert("Success", "Room added successfully");
+    Alert.alert("Success", "Journey added successfully");
 
     setUser(updatedUser);
 
@@ -54,15 +54,14 @@ const AddRoom = ({ hideModal }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontWeight: 'bold', fontSize: 16}}>Add Room</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 16}}>Join Journey</Text>
       <TextInput value={roomCode} onChangeText={(code) => {
         setRoomCode(code)
-        }} placeholder="Paste room code here"></TextInput>
+        }} placeholder="Paste journey code here"></TextInput>
       {
-        isLoading ? <ActivityIndicator style={{ marginTop: 10, height: 40 }} /> : <Button style={{ marginTop: 10, height: 40 }} mode="contained" onPress={handleAddRoom}>Add</Button>
+        isLoading ? <ActivityIndicator style={{ marginTop: 10, height: 40 }} /> :
+        <Button style={{ marginTop: 10, height: 40 }} mode="contained" onPress={handleAddRoom}>Join Now!</Button>
       }
-
-
     </View>
   );
 }

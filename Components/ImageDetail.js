@@ -89,15 +89,16 @@ const ImageDetail = ({
           alignItems: 'center'
         }}>
 
-        <Ionicons name="location-outline" size={30} />
         {
-          currentImage.location &&
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{ marginLeft: 10, width: '80%' }}>
-            {currentImage.location.name + ' | ' + currentImage.location.address}
-          </Text>
+          currentImage.location && <>
+            <Ionicons name="location-outline" size={30} />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ marginLeft: 10, width: '80%' }}>
+              {currentImage.location.name + ' | ' + currentImage.location.address}
+            </Text>
+          </>
         }
 
       </TouchableOpacity>

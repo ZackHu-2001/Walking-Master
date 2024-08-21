@@ -16,8 +16,8 @@ const AddImage = ({
   const { user, setUser } = useContext(Context)
   const [focus, setFocus] = useState(false)
   const [comment, setComment] = useState('')
-  const [location, setLocation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const { pickedLocation, setPickedLocation } = useContext(Context)
 
   const submit = async () => {
     try {
@@ -36,7 +36,7 @@ const AddImage = ({
           }]
         });
       }
-      const photos = uploadImages.map(uri => ({ uri: uri, comment: commentRef, location: location }));
+      const photos = uploadImages.map(uri => ({ uri: uri, comment: commentRef, location: pickedLocation }));
 
       setImageList(prev => {
         return [...prev, ...photos];
@@ -47,6 +47,7 @@ const AddImage = ({
       console.error('Failed to submit comment:', error);
     } finally {
       setIsLoading(false);
+      setPickedLocation(null);
     }
   };
 
@@ -64,7 +65,7 @@ const AddImage = ({
       />
 
       <TouchableOpacity onPress={() => {
-        navigation.navigate('LocationSelect', { setPickedLocation: setLocation })
+        navigation.navigate('LocationSelect')
       }}
       style={{
         width: '100%', display: 'flex', flexDirection: 'row',
@@ -73,10 +74,11 @@ const AddImage = ({
 
         <Ionicons name="location-outline" size={30} />
         {
-          location ? <Text
+          pickedLocation ? <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{ marginLeft: 10, width: '80%' }}>{location.name+' | '+location.address}</Text>: <Text style={{ marginLeft: 10 }}>Select Location</Text>
+            style={{ marginLeft: 10, width: '80%' }}>{pickedLocation.name + ' | ' + pickedLocation.address}</Text>
+            : <Text style={{ marginLeft: 10 }}>Select Location</Text>
         }
 
       </TouchableOpacity>

@@ -1,66 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const SWIPE_THRESHOLD = -50; 
-const MAX_TRANSLATE_X = -75; // limit sliding distance
-
 const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
-  const translateX = new Animated.Value(0);
-  const textOpacity = new Animated.Value(1);
-
-  const onGestureEvent = Animated.event(
-    [{ nativeEvent: { translationX: translateX } }],
-    { useNativeDriver: true }
-  );
-
-  const onHandlerStateChange = event => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      const { translationX } = event.nativeEvent;
-
-      if (translationX < SWIPE_THRESHOLD) {
-        Animated.spring(translateX, {
-          toValue: MAX_TRANSLATE_X, // limit the swipe distance
-          useNativeDriver: true,
-        }).start();
-        Animated.timing(textOpacity, {
-          toValue: 0, // hide the text
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        Animated.spring(translateX, {
-          toValue: 0, // slide back to initial position
-          useNativeDriver: true,
-        }).start();
-        Animated.spring(textOpacity, {
-          toValue: 1, // show text
-          useNativeDriver: true,
-        }).start();
-      }
-    }
-  };
-
   return (
-    <PanGestureHandler
-      onGestureEvent={editMode ? onGestureEvent : null} // only enable gesture when in Game Board Screen edit mode
-      onHandlerStateChange={editMode ? onHandlerStateChange : null}
-    >
-      <Animated.View style={[styles.card, { transform: [{ translateX }] }]}>
-        <TouchableOpacity onPress={onPress} style={styles.cardContent}>
-          <Text style={styles.title}>{title}</Text>
-          <Animated.Text style={[styles.description, { opacity: textOpacity }]}>
+    <View style={styles.card}>
+      <TouchableOpacity onPress={onPress} style={styles.cardContent}>
+        <Text style={styles.title}>{title}</Text>
+        {
+          editMode ? <TouchableOpacity style={styles.deleteButton} onPress={onSwipeRight}>
+            <Icon name="trash" size={30} color="#6750A4"  />
+          </TouchableOpacity> : <Text style={styles.description}>
             {size === 3 ? '3 X 3' : '4 X 3'}
-          </Animated.Text>
-        </TouchableOpacity>
-        {editMode && (
-          <Animated.View style={[styles.deleteButton, { opacity: translateX.interpolate({ inputRange: [MAX_TRANSLATE_X, 0], outputRange: [1, 0] }) }]}>
-            <Icon name="trash" size={30} color="red" onPress={onSwipeRight} />
-          </Animated.View>
-        )}
-      </Animated.View>
-    </PanGestureHandler>
+          </Text>
+        }
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -100,10 +55,10 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    right: 20,
+    right: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 50,
+    padding: 8,
   },
 });
 

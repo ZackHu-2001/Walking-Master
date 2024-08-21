@@ -82,12 +82,12 @@ const NewGame = ({ hideModal, navigateToGame }) => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text >Rules</Text>
-        <Text>During your walk, when you encounter a scene matching the card description, snap a photo and upload it to claim the spot. Complete a line (horizontal, vertical, or diagonal) to win.</Text>
+        <Text style={styles.title}>Intro</Text>
+        <Text>During your walk, when you encounter a scene matching the card description, snap a photo and upload it to share with friends. </Text>
       </View>
 
       <View style={styles.card}>
-        <Text >Board Size</Text>
+        <Text style={styles.title}>Board Size</Text>
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <TouchableOpacity style={[styles.choice, size === 3 && styles.selected]} onPress={() => setSize(3)}>
             <Text style={styles.choiceText}>3 x 3</Text>
@@ -99,7 +99,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
       </View>
 
       <View style={styles.card}>
-        <Text >Theme</Text>
+        <Text style={styles.title}>Theme</Text>
         <ScrollView horizontal={true}>
           {
             themes.map((t, i) => <ThemeCard key={i} theme={t} setTheme={setTheme} selected={theme === t} />)
@@ -117,7 +117,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
               setIsLoading(false);
               hideModal();
               navigateToGame(gameId);
-            }}>Create Game</Button>
+            }}>Create Journey</Button>
       }
 
     </View>
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   title: {
-    fontSize: 20,
+    fontWeight: 'bold',
   },
   choice: {
     width: '45%',
