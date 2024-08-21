@@ -61,13 +61,19 @@ export default styles = StyleSheet.create({
     dateTimePicker: {
       width: '100%',
     },
+    notificationContainer: {
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 10,
+    },
     button: {
       backgroundColor: '#6A4C9C', 
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 25, 
-      marginBottom: 10,
       width: '80%',
+      marginBottom: 5,
+      marginTop: 5,
     },
     buttonText: {
       color: '#ffffff',  
@@ -75,6 +81,13 @@ export default styles = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
     },
+    selectedText: {
+      fontSize: 16,
+      color: '#fff',
+      textAlign: 'center',
+      marginBottom: 10,
+      weights: 'bold',
+    },    
     confirmButton: {
       backgroundColor: '#993399',  
       paddingVertical: 12,
@@ -82,6 +95,7 @@ export default styles = StyleSheet.create({
       borderRadius: 25, 
       width: '80%',
       alignSelf: 'center',
+      marginTop: 10,
     },
     confirmButtonText: {
       color: '#ffffff',

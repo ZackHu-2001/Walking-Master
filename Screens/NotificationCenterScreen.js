@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Alert, StyleSheet, Platform, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Alert, Platform, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import DropDownPicker from 'react-native-dropdown-picker';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
 import * as Notifications from 'expo-notifications';
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
@@ -13,54 +13,73 @@ import styles from '../Styles/NotificationStyle';
 const NotificationCenterScreen = () => {
   const { user } = useContext(Context);
   const [games, setGames] = useState([]);
+  const [futureNotifications, setFutureNotifications] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0]; // 0 is the initial value
+  const [timeSelected, setTimeSelected] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
-    // fade in animation when loading
+    // Fade in animation when loading
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1000, // last for 1 second
+      duration: 1000,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
 
-  useEffect(() => {
-    const fetchUserGames = async () => {
-      if (user && user.uid) {
-        try {
-          const gamesQuery = query(
-            collection(db, "games"),
-            where("creater", "==", user.uid)
-          );
-          const gamesSnapshot = await getDocs(gamesQuery);
+  const fetchUserGames = async () => {
+    if (user && user.uid) {
+      try {
+        const gamesQuery = query(
+          collection(db, "games"),
+          where("creater", "==", user.uid)
+        );
+        const gamesSnapshot = await getDocs(gamesQuery);
 
-          if (gamesSnapshot.empty) {
-            console.log("No games found for this user.");
-          } else {
-            const gamesData = [];
-            gamesSnapshot.forEach((doc) => {
-              const gameData = doc.data();
-              gamesData.push({
-                label: gameData.createrName || "Unnamed Game",
-                value: doc.id,
-              });
+        if (gamesSnapshot.empty) {
+          Alert.alert("No Games", "No games were found for this user.");
+        } else {
+          const gamesData = [];
+          const notifications = [];
+
+          gamesSnapshot.forEach((doc) => {
+            const gameData = doc.data();
+            const notificationTime = gameData.notification ? new Date(gameData.notification.time.seconds * 1000) : null;
+
+            gamesData.push({
+              label: gameData.createrName || "Unnamed Game",
+              value: doc.id,
+              notification: gameData.notification ? {
+                ...gameData.notification,
+                time: notificationTime,
+              } : null,
             });
 
-            setGames(gamesData);
-          }
-        } catch (error) {
-          console.error("Error fetching games:", error);
-          Alert.alert("Error", "Unable to fetch games.");
-        }
-      } else {
-        console.log("No user found in context.");
-      }
-    };
+            if (notificationTime && notificationTime > new Date()) {
+              notifications.push({
+                message: gameData.notification.message,
+                time: notificationTime,
+                gameName: gameData.createrName || "Unnamed Game",
+              });
+            }
+          });
 
+          setGames(gamesData); // Set the state to display the games
+          setFutureNotifications(notifications); // Set state to display future notifications
+        }
+      } catch (error) {
+        console.error("Error fetching games:", error);
+        Alert.alert("Error", "Unable to fetch games.");
+      }
+    } else {
+      console.log("No user found in context.");
+    }
+  };
+
+  useEffect(() => {
     fetchUserGames();
   }, [user]);
 
@@ -70,6 +89,7 @@ const NotificationCenterScreen = () => {
     if (Platform.OS === 'ios') {
       setShowDatePicker(false);
     }
+    setTimeSelected(true);
   };
 
   const showDatePickerAndroid = () => {
@@ -92,6 +112,10 @@ const NotificationCenterScreen = () => {
 
   const showDateTimePickerIOS = () => {
     setShowDatePicker(true);
+  };
+
+  const formatDateTime = (date) => {
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   };
 
   const scheduleNotification = async () => {
@@ -118,7 +142,18 @@ const NotificationCenterScreen = () => {
       },
     });
 
+    // Update the game document with notification details
+    const notification = {
+      time: date,
+      message: `Reminder for ${games.find(g => g.value === selectedGame)?.label}`,
+    };
+    const gameDocRef = doc(db, "games", selectedGame);
+    await updateDoc(gameDocRef, { notification });
+
     Alert.alert("Success", "Notification scheduled successfully!");
+
+    // Re-fetch the games to refresh the notifications list
+    fetchUserGames();
   };
 
   return (
@@ -148,6 +183,18 @@ const NotificationCenterScreen = () => {
           selectedItemLabelStyle={styles.selectedItemLabelStyle}
         />
 
+        {futureNotifications.length > 0 ? (
+          futureNotifications.map((notification, index) => (
+            <View key={index} style={styles.notificationContainer}>
+              <Text style={styles.selectedText}>
+                {`Game: ${notification.gameName}\nReminder: ${notification.message}\nTime: ${formatDateTime(notification.time)}`}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.selectedText}>No upcoming notifications.</Text>
+        )}
+
         <View style={styles.dateTimeContainer}>
           {Platform.OS === 'android' ? (
             <>
@@ -173,6 +220,13 @@ const NotificationCenterScreen = () => {
             />
           )}
         </View>
+
+        {timeSelected && (
+          <Text style={styles.selectedText}>
+            Selected Date & Time: {"\n"}
+            {formatDateTime(date)}
+          </Text>
+        )}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
