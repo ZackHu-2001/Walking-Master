@@ -117,7 +117,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
               setIsLoading(false);
               hideModal();
               navigateToGame(gameId);
-            }}>Create Game</Button>
+            }}>Create Journey</Button>
       }
 
     </View>

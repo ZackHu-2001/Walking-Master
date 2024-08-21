@@ -11,7 +11,7 @@ const BottomTabNavigator = () => (
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
-        if (route.name === 'Routes') {
+        if (route.name === 'Journeys') {
           iconName = focused ? 'grid' : 'grid-outline';
         } else if (route.name === 'Profile') {
           iconName = focused ? 'person' : 'person-outline';
@@ -28,7 +28,7 @@ const BottomTabNavigator = () => (
       ],
     })}
   >
-    <Tab.Screen name="Routes" component={GameBoardScreen} />
+    <Tab.Screen name="Journeys" component={GameBoardScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
 );

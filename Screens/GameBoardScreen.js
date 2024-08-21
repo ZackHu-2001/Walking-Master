@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useCallback } from 'react';
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Dimensions, Alert } from 'react-native';
+import { View, Image, Text, ScrollView, RefreshControl, StyleSheet, Dimensions, Alert } from 'react-native';
 import GameCard from '../Components/GameCard';
 import { getUser, removeGame } from '../Firebase/firestoreHelper';
 import FloatingActionButton from '../Components/FloatingActionButton';
@@ -23,6 +23,10 @@ export default function GameBoardScreen({ navigation }) {
   const hideModal = () => setVisible(false);
 
   const editRoom = () => {
+    if (games.length === 0) {
+      Alert.alert("No journey", "You have no journey to edit");
+      return;
+    }
     setEditMode(true);
     navigation.setOptions({
       headerRight: () => (
@@ -101,7 +105,6 @@ export default function GameBoardScreen({ navigation }) {
         // Create a query for only the user's games
         const gamesCollection = collection(db, 'games');
         if (userInfo.games.length === 0) {
-          console.log("No games found for user");
           setIsLoading(false);
           return;
         }
@@ -181,7 +184,8 @@ export default function GameBoardScreen({ navigation }) {
         </View> :
         games.length === 0 ?
           <View style={styles.loading}>
-            <Text style={{ fontSize: 20 }}>No games found</Text>
+            <Image style={{ width: 200, height: 150 }} source={require('../assets/emptyHint.png')}/>
+            <Text style={{ fontSize: 20, marginTop: 20 }}>Your Journey Begins Here!</Text>
           </View> :
           <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
