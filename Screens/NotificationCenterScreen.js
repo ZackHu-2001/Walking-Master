@@ -67,7 +67,6 @@ const NotificationCenterScreen = () => {
             }
           });
 
-          console.log("Games Data (after processing):", gamesData);
           setGames(gamesData); // Set the state to display the games
           setFutureNotifications(notifications); // Set state to display future notifications
         }
@@ -184,6 +183,18 @@ const NotificationCenterScreen = () => {
           selectedItemLabelStyle={styles.selectedItemLabelStyle}
         />
 
+        {futureNotifications.length > 0 ? (
+          futureNotifications.map((notification, index) => (
+            <View key={index} style={styles.notificationContainer}>
+              <Text style={styles.selectedText}>
+                {`Game: ${notification.gameName}\nReminder: ${notification.message}\nTime: ${formatDateTime(notification.time)}`}
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.selectedText}>No upcoming notifications.</Text>
+        )}
+
         <View style={styles.dateTimeContainer}>
           {Platform.OS === 'android' ? (
             <>
@@ -215,18 +226,6 @@ const NotificationCenterScreen = () => {
             Selected Date & Time: {"\n"}
             {formatDateTime(date)}
           </Text>
-        )}
-
-        {futureNotifications.length > 0 ? (
-          futureNotifications.map((notification, index) => (
-            <View key={index} style={styles.notificationContainer}>
-              <Text style={styles.selectedText}>
-                {`Game: ${notification.gameName}\nReminder: ${notification.message}\nTime: ${formatDateTime(notification.time)}`}
-              </Text>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.selectedText}>No upcoming notifications.</Text>
         )}
 
         <View style={styles.buttonContainer}>
