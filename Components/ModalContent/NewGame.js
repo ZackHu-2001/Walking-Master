@@ -79,7 +79,6 @@ const NewGame = ({ hideModal, navigateToGame }) => {
     'https://firebasestorage.googleapis.com/v0/b/walkingmaster-30a72.appspot.com/o/background%2F171723173969_.pic.jpg?alt=media&token=2e2b775c-460c-4907-8b5d-a311fd0a4023'
   ]
   const [theme, setTheme] = useState(themes[0]);
-  // const { user, setUser } = useContext(Context);
 
   return (
     <View style={styles.container}>
