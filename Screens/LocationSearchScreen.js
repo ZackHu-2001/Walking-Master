@@ -115,22 +115,21 @@ const LocationSearchScreen = ({ navigation, route }) => {
     }
   };
 
-  const handleSearch = async (text) => {
-    setSearchQuery(text);
-    if (text.length > 2) {
-      setLoading(true);
-      try {
-        const searchResults = await searchLocations(text, location);
-        setLocations(searchResults);
-      } catch (error) {
-        console.error('Error searching locations:', error);
-      } finally {
-        setLoading(false);
-      }
-    } else if (text.length === 0) {
-      fetchNearbyLocations();
-    }
-  };
+  // const handleSearch = async (text) => {
+  //   setSearchQuery(text);
+  //   if (text.length > 2) {
+  //     setLoading(true);
+  //     try {
+  //       const searchResults = await searchLocations(text, location);
+  //       console.log(searchResults)
+  //       setLocations(searchResults);
+  //     } catch (error) {
+  //       console.error('Error searching locations:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.locationItem} onPress={() => {
@@ -163,6 +162,15 @@ const LocationSearchScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+
+      {/* <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for a place nearby"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View> */}
       {loading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="#4CAF50" />
@@ -170,14 +178,6 @@ const LocationSearchScreen = ({ navigation, route }) => {
         </View>
       ) : (
         <>
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search for a place nearby"
-              value={searchQuery}
-              onChangeText={handleSearch}
-            />
-          </View>
           <FlatList
             data={locations}
             renderItem={renderItem}

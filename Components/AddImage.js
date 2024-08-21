@@ -16,9 +16,8 @@ const AddImage = ({
   const { user, setUser } = useContext(Context)
   const [focus, setFocus] = useState(false)
   const [comment, setComment] = useState('')
-  // const [location, setLocation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { pickedLocation } = useContext(Context)
+  const { pickedLocation, setPickedLocation } = useContext(Context)
 
   const submit = async () => {
     try {
@@ -48,6 +47,7 @@ const AddImage = ({
       console.error('Failed to submit comment:', error);
     } finally {
       setIsLoading(false);
+      setPickedLocation(null);
     }
   };
 

@@ -155,7 +155,7 @@ const GameScreen = ({ navigation }) => {
           actions={[
             {
               icon: 'content-copy',
-              label: 'Share Route',
+              label: 'Share Journey Code',
               onPress: () => copyCode(),
             },
             {
