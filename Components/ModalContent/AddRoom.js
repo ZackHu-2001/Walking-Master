@@ -19,20 +19,20 @@ const AddRoom = ({ hideModal }) => {
 
     setIsLoading(true);
     // check if the room exists
-    if (!checkGameExists(roomCode, user.uid)) {
-      Alert.alert("Error", "Room does not exist");
+    let exist = await checkGameExists(roomCode, user.uid);
+    if (!exist) {
+      Alert.alert("Error", "Journey does not exist");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
 
     if (user.games.includes(roomCode)) {
-      Alert.alert("Error", "Room already added");
+      Alert.alert("Error", "Journey already added");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
-    console.log("user in add room", user);
     // add the room to the user's room list
     const updatedUser = {
       ...user,
@@ -41,7 +41,7 @@ const AddRoom = ({ hideModal }) => {
 
     await updateUser(user.uid, updatedUser);
 
-    Alert.alert("Success", "Room added successfully");
+    Alert.alert("Success", "Journey added successfully");
 
     setUser(updatedUser);
 
@@ -54,10 +54,10 @@ const AddRoom = ({ hideModal }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontWeight: 'bold', fontSize: 16}}>Join Route</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 16}}>Join Journey</Text>
       <TextInput value={roomCode} onChangeText={(code) => {
         setRoomCode(code)
-        }} placeholder="Paste route code here"></TextInput>
+        }} placeholder="Paste journey code here"></TextInput>
       {
         isLoading ? <ActivityIndicator style={{ marginTop: 10, height: 40 }} /> :
         <Button style={{ marginTop: 10, height: 40 }} mode="contained" onPress={handleAddRoom}>Join Now!</Button>
