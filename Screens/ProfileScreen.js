@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
 import { Button, IconButton, Avatar, ActivityIndicator } from 'react-native-paper'; // Import Avatar and ActivityIndicator components from react-native-paper
 import { signOut } from 'firebase/auth';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const ProfileScreen = () => {
   const { user, setUser } = useContext(Context);
@@ -47,21 +48,28 @@ const ProfileScreen = () => {
 
   const uploadImageAsync = async (uri, path) => {
     try {
+      console.log('Attempting to upload image from URI:', uri); 
       const storage = getStorage();
       const storageRef = ref(storage, path);
+  
       const response = await fetch(uri);
+      console.log('Fetch response:', response);
       const blob = await response.blob();
-
+      console.log('Blob created:', blob);
+  
+      console.log('Uploading image...');
       await uploadBytes(storageRef, blob);
-
+      console.log('Image uploaded to storage');
+  
       const downloadUrl = await getDownloadURL(storageRef);
-      console.log('Image uploaded, download URL:', downloadUrl);
+      console.log('Download URL:', downloadUrl);
       return downloadUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('Error in uploadImageAsync:', error);
+      Alert.alert('Upload Error', error.message);
       return null;
     }
-  };
+  };  
 
   const handleAvatarPress = async () => {
     Alert.alert(
@@ -89,23 +97,35 @@ const ProfileScreen = () => {
   };
 
   const processImage = async (uri) => {
-    const uploadedUrl = await uploadImageAsync(uri, `avatars/${user.uid}`);
-    if (uploadedUrl) {
-      setAvatarUri(uploadedUrl);
-
-      try {
-        if (user?.uid) {
-          await updateDoc(doc(db, 'users', user.uid), { avatarUrl: uploadedUrl });
-          Alert.alert('Success', 'Avatar updated successfully!');
-        } else {
-          Alert.alert('Error', 'User ID is missing.');
+    try {
+      // compress and resize the image to 800px width
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800 } }],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+  
+      console.log('Processing image with URI:', manipulatedImage.uri);
+      const uploadedUrl = await uploadImageAsync(manipulatedImage.uri, `avatars/${user.uid}`);
+      if (uploadedUrl) {
+        setAvatarUri(uploadedUrl);
+  
+        try {
+          if (user?.uid) {
+            await updateDoc(doc(db, 'users', user.uid), { avatarUrl: uploadedUrl });
+            Alert.alert('Success', 'Avatar updated successfully!');
+          } else {
+            Alert.alert('Error', 'User ID is missing.');
+          }
+        } catch (error) {
+          console.error('Error updating avatar:', error);
+          Alert.alert('Error', 'Failed to update avatar.');
         }
-      } catch (error) {
-        console.error('Error updating avatar:', error);
-        Alert.alert('Error', 'Failed to update avatar.');
+      } else {
+        Alert.alert('Error', 'Failed to upload image.');
       }
-    } else {
-      Alert.alert('Error', 'Failed to upload image.');
+    } catch (error) {
+      console.error('Error in processImage:', error);
     }
   };
 
