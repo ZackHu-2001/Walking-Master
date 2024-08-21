@@ -50,9 +50,28 @@ const GameScreen = ({ navigation }) => {
     setImageDetailVisible(false);
   }
 
-  const handleAddImageDismiss = () => {
-    setImageListVisible(true);
+  const dismissAddImage = () => {
     setAddImageVisible(false);
+    setImageListVisible(true);
+  }
+
+  const handleAddImageDismiss = () => {
+    Alert.alert("Confirm Exit Editing",
+      "Are you sure you want to exit editing? Your changes will not be saved.",
+      [
+        {
+          text: "Confirm",
+          onPress: () => {
+            setImageListVisible(true);
+            setAddImageVisible(false);
+          }
+        },
+        {
+          text: "Cancel",
+          onPress: () => { }
+        }
+      ]
+    );
   }
 
   useEffect(() => {
@@ -123,7 +142,7 @@ const GameScreen = ({ navigation }) => {
 
       <Modal visible={addImageVisible} onDismiss={handleAddImageDismiss} contentContainerStyle={modalStyles.modal}>
         <AddImage uploadImages={uploadImages} setImageList={setImageList} navigation={navigation}
-          handleAddImageDismiss={handleAddImageDismiss} setImageListVisible={setImageListVisible} />
+          handleAddImageDismiss={dismissAddImage} setImageListVisible={setImageListVisible} />
       </Modal>
 
       {
