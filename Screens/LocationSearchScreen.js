@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Button } from 'react-native-paper';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
+import Context from '../Context/context';
 
 const GOOGLE_PLACES_API_KEY = 'AIzaSyDylz4EXfCqB4riHXFWHsA2oiOnabLRx4M';
 const GOOGLE_PLACES_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
@@ -60,7 +61,7 @@ const searchLocations = async (query, location) => {
 };
 
 const LocationSearchScreen = ({ navigation, route }) => {
-  const { setPickedLocation } = route.params;
+  const { setPickedLocation } = useContext(Context);
   const [selected, setSelected] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [locations, setLocations] = useState([]);
