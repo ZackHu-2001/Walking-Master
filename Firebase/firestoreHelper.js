@@ -116,3 +116,15 @@ export const updateUser = async (id, user) => {
 export const addUser = async (uid, user) => {
   return await setDoc(doc(db, "users", uid), user);
 }
+
+export const updateGameNotification = async (gameId, notification) => {
+  try {
+    const gameDocRef = doc(db, "games", gameId);
+    await updateDoc(gameDocRef, {
+      notification: notification,
+    });
+    console.log("Notification updated successfully!");
+  } catch (error) {
+    console.error("Error updating notification:", error);
+  }
+};

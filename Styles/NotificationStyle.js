@@ -75,10 +75,12 @@ export default styles = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
     },
-    selectedDateTimeText: {
+    selectedText: {
       fontSize: 16,
       color: '#fff',
       textAlign: 'center',
+      marginBottom: 10,
+      weights: 'bold',
     },    
     confirmButton: {
       backgroundColor: '#993399',  
