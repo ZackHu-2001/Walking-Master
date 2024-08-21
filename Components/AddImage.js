@@ -21,12 +21,10 @@ const AddImage = ({
 
   const submit = async () => {
     try {
-      console.log('user', user);
       setIsLoading(true);
       let commentRef = null;
 
       if (!comment) {
-        console.log("no comment");
         commentRef = await addComment({
           comments: []
         });
@@ -83,7 +81,8 @@ const AddImage = ({
 
       </TouchableOpacity>
       {
-        isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Release</Button>
+        isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> :
+        <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Release</Button>
       }
 
     </View>

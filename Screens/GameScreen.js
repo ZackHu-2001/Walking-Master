@@ -8,6 +8,7 @@ import ImageList from "../Components/ImageList";
 import modalStyles from "../Styles/ModalStyle";
 import AddImage from "../Components/AddImage";
 import ImageDetail from "../Components/ImageDetail";
+import * as Clipboard from 'expo-clipboard';
 
 const GameScreen = ({ navigation }) => {
   const [gameInfo, setGameInfo] = useState(null);
@@ -65,11 +66,11 @@ const GameScreen = ({ navigation }) => {
     fetchGameInfo();
   }, []);
 
-  const copyCode = () => {
+  const copyCode = async () => {
     const code = gameId;
-    // Clipboard.setString(gameId);
+    await Clipboard.setStringAsync(code);
 
-    Alert.alert("Room Code Copied", code);
+    Alert.alert("Room Code Copied!");
   }
 
   const backToHome = () => {

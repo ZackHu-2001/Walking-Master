@@ -30,6 +30,17 @@ export const updateGame = async (id, game) => {
   return await updateDoc(doc(db, "games", id), game);
 }
 
+export const checkGameExists = async (id) => {
+  const querySnapshot = await getDocs(collection(db, "games"));
+  let exists = false;
+  querySnapshot.forEach((doc) => {
+    if (doc.id === id) {
+      exists = true;
+    }
+  });
+  return exists;
+}
+
 // export const listenForGames = (ids = [], callback) => {
 //   const gamesCollection = collection(db, 'games');
 
