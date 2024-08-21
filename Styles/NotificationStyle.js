@@ -66,8 +66,8 @@ export default styles = StyleSheet.create({
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 25, 
-      marginBottom: 10,
       width: '80%',
+      marginBottom: 5,
     },
     buttonText: {
       color: '#ffffff',  
@@ -75,6 +75,11 @@ export default styles = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
     },
+    selectedDateTimeText: {
+      fontSize: 16,
+      color: '#fff',
+      textAlign: 'center',
+    },    
     confirmButton: {
       backgroundColor: '#993399',  
       paddingVertical: 12,
@@ -82,6 +87,7 @@ export default styles = StyleSheet.create({
       borderRadius: 25, 
       width: '80%',
       alignSelf: 'center',
+      marginTop: 20,
     },
     confirmButtonText: {
       color: '#ffffff',

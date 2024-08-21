@@ -94,6 +94,10 @@ const NotificationCenterScreen = () => {
     setShowDatePicker(true);
   };
 
+  const formatDateTime = (date) => {
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
+
   const scheduleNotification = async () => {
     if (!selectedGame) {
       Alert.alert("Error", "Please select a game to set up a notification.");
@@ -173,6 +177,11 @@ const NotificationCenterScreen = () => {
             />
           )}
         </View>
+
+        <Text style={styles.selectedDateTimeText}>
+          Selected Date & Time: {"\n"}
+          {formatDateTime(date)}
+        </Text>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
