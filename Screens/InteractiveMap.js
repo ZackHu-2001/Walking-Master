@@ -1,12 +1,12 @@
-import React from 'react';
+import { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import MapView, { Marker } from 'react-native-maps';
 
 const InteractiveMap = ({ navigation, route }) => {
   const { location } = route.params;
-  const [parkLocations, setParkLocations] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [parkLocations, setParkLocations] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchNearbyParks = async (position) => {
     const { latitude, longitude } = position;

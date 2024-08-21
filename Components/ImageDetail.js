@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { Image, View, Text, ScrollView, TextInput, Alert, TouchableOpacity } from 'react-native'
 import { ActivityIndicator, Button } from 'react-native-paper'
 import modalStyles from '../Styles/ModalStyle'
@@ -7,7 +7,7 @@ import Context from '../Context/context'
 import { Ionicons } from '@expo/vector-icons'
 
 const Comment = ({ content, creater, orientation }) => {
-  const [createrInfo, setCreaterInfo] = React.useState(null);
+  const [createrInfo, setCreaterInfo] = useState(null);
 
   useEffect(() => {
     const fetchCreaterInfo = async () => {
@@ -38,10 +38,10 @@ const ImageDetail = ({
   setImageDetailVisible,
   navigation,
 }) => {
-  const [comments, setComments] = React.useState([])
-  const [comment, setComment] = React.useState(null);
-  const [focus, setFocus] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [comments, setComments] = useState([])
+  const [comment, setComment] = useState(null);
+  const [focus, setFocus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(Context)
 
   useEffect(() => {

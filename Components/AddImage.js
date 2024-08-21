@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useState } from 'react'
 import { TextInput, Text, Image, View, TouchableOpacity } from 'react-native'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import { Ionicons } from '@expo/vector-icons'
@@ -14,10 +14,10 @@ const AddImage = ({
   setImageListVisible,
 }) => {
   const { user, setUser } = useContext(Context)
-  const [focus, setFocus] = React.useState(false)
-  const [comment, setComment] = React.useState('')
-  const [location, setLocation] = React.useState(null)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [focus, setFocus] = useState(false)
+  const [comment, setComment] = useState('')
+  const [location, setLocation] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const submit = async () => {
     try {
