@@ -14,17 +14,17 @@ const FloatingActionButton = ({ addNewGame, addRoom, editRoom }) => {
       actions={[
         {
           icon: 'square-edit-outline',
-          label: 'Edit Rooms',
+          label: 'Edit Route',
           onPress: () => editRoom(),
         },
         {
           icon: 'star',
-          label: 'Add Room',
+          label: 'Join Route',
           onPress: () => addRoom(),
         },
         {
           icon: 'plus',
-          label: 'New Game',
+          label: 'New Route',
           onPress: () => addNewGame(),
         },
       ]}
