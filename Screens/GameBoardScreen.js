@@ -1,7 +1,7 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import { useEffect, useContext, useState, useCallback } from 'react';
+import { View, Text, ScrollView, RefreshControl, StyleSheet, Dimensions, Alert } from 'react-native';
 import GameCard from '../Components/GameCard';
-import { getUser, listenForGames,removeGame } from '../Firebase/firestoreHelper';
+import { getUser, removeGame } from '../Firebase/firestoreHelper';
 import FloatingActionButton from '../Components/FloatingActionButton';
 import { Modal, ActivityIndicator, Portal } from 'react-native-paper';
 import NewGame from '../Components/ModalContent/NewGame';
@@ -12,18 +12,41 @@ import { db } from '../Firebase/FirebaseSetup';
 
 export default function GameBoardScreen({ navigation }) {
   const [games, setGames] = useState([]);
-  const [visible, setVisible] = React.useState(false);
-  const [modalContent, setModalContent] = React.useState(1);
-  const { user } = useContext(Context);
+  const [visible, setVisible] = useState(false);
+  const [modalContent, setModalContent] = useState(1);
+  const { user, setUser } = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   const editRoom = () => {
-    setEditMode(!editMode);
-  }
+    setEditMode(true);
+    navigation.setOptions({
+      headerRight: () => (
+        <Text style={{ marginRight: 40 }} onPress={handleDonePress}>
+          Done
+        </Text>
+      ),
+    });
+  };
+
+  const handleDonePress = async () => {
+    setEditMode(false);
+    try {
+      const updatedUser = await getUser(user.uid);
+      setUser(updatedUser);
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    } finally {
+      navigation.setOptions({
+        headerRight: null,
+      });
+    }
+  };
+
 
   const addNewGame = () => {
     setModalContent(1);
@@ -36,6 +59,24 @@ export default function GameBoardScreen({ navigation }) {
   }
 
   const handleSwipeRight = async (gameId) => {
+    Alert.alert(
+      "Remove route",
+      "Are you sure you want to remove this route?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Remove",
+          onPress: () => removeGameFromUser(gameId)
+        }
+      ]
+    );
+  };
+
+  const removeGameFromUser = async (gameId) => {
     try {
       await removeGame(user.uid, gameId);
       console.log(`Game ${gameId} removed from user collection`);
@@ -45,7 +86,7 @@ export default function GameBoardScreen({ navigation }) {
     } catch (error) {
       console.error("Error removing game from user:", error);
     }
-  };
+  }
 
   useEffect(() => {
     if (!user) return;
@@ -101,6 +142,34 @@ export default function GameBoardScreen({ navigation }) {
     navigation.navigate('Game', { gameId });
   }
 
+  function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    (async () => {
+      const updatedUser = await getUser(user.uid);
+      updatedUser.uid = user.uid;
+
+      if (!arraysEqual(updatedUser.games, user.games)) {
+        setUser(updatedUser);
+      }
+      setRefreshing(false);
+    })()
+
+  }, [user]);
+
   return (
     <>
       <FloatingActionButton addNewGame={addNewGame} addRoom={addRoom} editRoom={editRoom} />
@@ -114,7 +183,10 @@ export default function GameBoardScreen({ navigation }) {
           <View style={styles.loading}>
             <Text style={{ fontSize: 20 }}>No games found</Text>
           </View> :
-          <ScrollView contentContainerStyle={styles.scrollView} >
+          <ScrollView refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+            contentContainerStyle={styles.scrollView} >
             {
               games.map((game, index) => (
                 <GameCard
