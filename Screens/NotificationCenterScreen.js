@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Alert, Platform, TouchableOpacity, Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'; 
+import { LinearGradient } from 'expo-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../Firebase/FirebaseSetup';
@@ -33,9 +33,10 @@ const NotificationCenterScreen = () => {
   const fetchUserGames = async () => {
     if (user && user.uid) {
       try {
+
         const gamesQuery = query(
           collection(db, "games"),
-          where("creater", "==", user.uid)
+          where('__name__', 'in', user.games) // '__name__' is a special field for document ID
         );
         const gamesSnapshot = await getDocs(gamesQuery);
 
@@ -158,7 +159,7 @@ const NotificationCenterScreen = () => {
 
   return (
     <LinearGradient
-      colors={['#7DB9DE', '#77428D']} 
+      colors={['#7DB9DE', '#77428D']}
       style={styles.container}
     >
       <Animated.View style={[styles.innerContainer, { opacity: fadeAnim }]}>

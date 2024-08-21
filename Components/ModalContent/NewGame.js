@@ -25,7 +25,6 @@ const getImgUrl = async (imgRef) => {
   return url;
 }
 
-
 const NewGame = ({ hideModal, navigateToGame }) => {
   const [size, setSize] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
