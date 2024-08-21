@@ -17,6 +17,7 @@ const NotificationCenterScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [open, setOpen] = useState(false);
+  const [timeSelected, setTimeSelected] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0]; // 0 is the initial value
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const NotificationCenterScreen = () => {
     if (Platform.OS === 'ios') {
       setShowDatePicker(false);
     }
+    setTimeSelected(true);
   };
 
   const showDatePickerAndroid = () => {
@@ -95,7 +97,7 @@ const NotificationCenterScreen = () => {
   };
 
   const formatDateTime = (date) => {
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   };
 
   const scheduleNotification = async () => {
@@ -121,7 +123,6 @@ const NotificationCenterScreen = () => {
         seconds: Math.floor(timeDifference / 1000),
       },
     });
-
     Alert.alert("Success", "Notification scheduled successfully!");
   };
 
@@ -178,10 +179,12 @@ const NotificationCenterScreen = () => {
           )}
         </View>
 
-        <Text style={styles.selectedDateTimeText}>
-          Selected Date & Time: {"\n"}
-          {formatDateTime(date)}
-        </Text>
+        {timeSelected && (
+          <Text style={styles.selectedDateTimeText}>
+            Selected Date & Time: {"\n"}
+            {formatDateTime(date)}
+          </Text>
+        )}
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.confirmButton} onPress={scheduleNotification}>
