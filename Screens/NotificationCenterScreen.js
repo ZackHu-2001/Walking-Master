@@ -226,7 +226,7 @@ const NotificationCenterScreen = () => {
             </View>
           ))
         ) : (
-          <Text style={styles.noNotificationText}>No upcoming notifications.</Text>
+          <Text style={styles.selectedText}>No upcoming notifications.</Text>
         )}
 
         <View style={styles.buttonContainer}>
