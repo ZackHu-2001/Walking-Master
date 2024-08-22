@@ -8,6 +8,7 @@ const FloatingActionButton = ({ addNewGame, addRoom, editRoom }) => {
   return (
     <FAB.Group
       open={open}
+      fabStyle={{ backgroundColor: '#D3E4CD' }}
       style={{ paddingBottom: 50, paddingRight: 10, zIndex: 2 }}
       visible
       icon={open ? 'close' : 'plus'}
