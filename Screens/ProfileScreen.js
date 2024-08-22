@@ -143,7 +143,7 @@ const ProfileScreen = () => {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator animating={true} size="large" />
+        <ActivityIndicator animating={true} size="large" color="#1C5D3A"/>
         <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
@@ -167,10 +167,11 @@ const ProfileScreen = () => {
           </View>
           <Text style={styles.userName}>{username}</Text>
           <Text style={styles.userEmail}>{email}</Text>
-          <Button mode="contained" style={styles.button} onPress={handleLogout}>
+          <Button mode="contained" style={styles.button} onPress={handleLogout} contentStyle={{ backgroundColor: '#1C5D3A' }}>
             Logout
           </Button>
-          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('NotificationCenter')}>
+          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('NotificationCenter')}
+            contentStyle={{ backgroundColor: '#1C5D3A' }}>
             Notifications
           </Button>
         </>

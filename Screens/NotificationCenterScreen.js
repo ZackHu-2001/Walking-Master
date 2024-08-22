@@ -179,7 +179,7 @@ const NotificationCenterScreen = () => {
 
   return (
     <LinearGradient
-      colors={['#7DB9DE', '#77428D']}
+      colors={['#51A8DD', '#86C166']}
       style={styles.container}
     >
       <Animated.View style={[styles.innerContainer, { opacity: fadeAnim }]}>
