@@ -133,7 +133,8 @@ const ImageDetail = ({
         value={comment}
       />
       {
-        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Add Comment</Button>
+        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginBottom: -20, height: 40 }} /> :
+        <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Add Comment</Button>
       }
     </View>
 
