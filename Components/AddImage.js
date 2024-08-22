@@ -83,8 +83,8 @@ const AddImage = ({
 
       </TouchableOpacity>
       {
-        isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> :
-        <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Release</Button>
+        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginBottom: -20, height: 40 }} /> :
+          <Button textColor='#1C5D3A' style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Release</Button>
       }
 
     </View>

@@ -111,7 +111,7 @@ const SignupScreen = ({ navigation }) => {
         }
       }}>
         {
-          isLoading ? <ActivityIndicator /> : <Text style={styles.buttonText}>Register</Text>
+          isLoading ? <ActivityIndicator color='#1C5D3A' /> : <Text style={styles.buttonText}>Register</Text>
         }
       </TouchableOpacity>
 

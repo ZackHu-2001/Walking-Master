@@ -55,13 +55,13 @@ const AddRoom = ({ hideModal }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{fontWeight: 'bold', fontSize: 16}}>Join Journey</Text>
+      <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Join Journey</Text>
       <TextInput value={roomCode} onChangeText={(code) => {
         setRoomCode(code)
-        }} placeholder="Paste journey code here"></TextInput>
+      }} placeholder="Paste journey code here"></TextInput>
       {
-        isLoading ? <ActivityIndicator style={{ marginTop: 10, height: 40 }} /> :
-        <Button style={{ marginTop: 10, height: 40 }} mode="contained" onPress={handleAddRoom}>Join Now!</Button>
+        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginTop: 10, height: 40 }} /> :
+          <Button style={{ marginTop: 10, height: 40 }} buttonColor='#1C5D3A' mode="contained" onPress={handleAddRoom}>Join Now!</Button>
       }
     </View>
   );

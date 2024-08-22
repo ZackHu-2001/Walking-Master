@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Dimensions, Text, StyleSheet, ImageBackground, TouchableOpacity, Alert, Image, ActivityIndicator, Button } from "react-native";
+import { View, Dimensions, StyleSheet, ImageBackground, Alert } from "react-native";
 import { getGameInfo, updateGame } from "../Firebase/firestoreHelper";
 import Tile from "../Components/Tile";
 import { useRoute } from "@react-navigation/native";
@@ -149,6 +149,7 @@ const GameScreen = ({ navigation }) => {
         !addImageVisible && !imageDetailVisible && !imageListVisible &&
         <FAB.Group
           open={open}
+          fabStyle={{ backgroundColor: '#D3E4CD' }}
           style={{ paddingBottom: 50, paddingRight: 10, zIndex: 2 }}
           visible
           icon={open ? 'close' : 'progress-pencil'}

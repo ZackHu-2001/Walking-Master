@@ -109,7 +109,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
 
       {
         isLoading ?
-          <ActivityIndicator animating={isLoading} style={{ height: 40 }} /> :
+          <ActivityIndicator color='#1C5D3A' animating={isLoading} style={{ height: 40 }} /> :
           <Button style={{ height: 40 }}
             textColor='#1C5D3A'
             onPress={async () => {
