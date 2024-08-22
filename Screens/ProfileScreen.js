@@ -6,7 +6,7 @@ import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
-import { Button, IconButton, Avatar, ActivityIndicator } from 'react-native-paper'; // Import Avatar and ActivityIndicator components from react-native-paper
+import { IconButton, Avatar, ActivityIndicator } from 'react-native-paper'; // Import Avatar and ActivityIndicator components from react-native-paper
 import { signOut } from 'firebase/auth';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -167,23 +167,33 @@ const ProfileScreen = () => {
           </View>
           <Text style={styles.userName}>{username}</Text>
           <Text style={styles.userEmail}>{email}</Text>
-          <Button mode="contained" style={styles.button} onPress={handleLogout} contentStyle={{ backgroundColor: '#1C5D3A' }}>
-            Logout
-          </Button>
-          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('NotificationCenter')}
-            contentStyle={{ backgroundColor: '#1C5D3A' }}>
-            Notifications
-          </Button>
+          <TouchableOpacity style={{
+            backgroundColor: '#E57373',
+            padding: 15,
+            borderRadius: 10,
+            width: '100%',
+            alignItems: 'center',
+            marginVertical: 10,
+          }} onPress={handleLogout}
+          >
+            <Text style={{ color: '#1C5D3A', fontSize: 18 }}>Log Out</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#D3E4CD',
+              padding: 15,
+              borderRadius: 10,
+              alignItems: 'center',
+              width: '100%',
+            }}
+            onPress={() => navigation.navigate('NotificationCenter')}
+          >
+            <Text style={{ color: '#1C5D3A', fontSize: 18 }}>Set Reminder</Text>
+          </TouchableOpacity>
         </>
       ) : (
-        <>
-          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('Login')}>
-            Login
-          </Button>
-          <Button mode="contained" style={styles.button} onPress={() => navigation.navigate('SignUp')}>
-            Sign Up
-          </Button>
-        </>
+        <></>
       )}
     </View>
   );
@@ -242,10 +252,6 @@ const styles = StyleSheet.create({
     color: '#7A7A7A',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  button: {
-    marginTop: 10,
-    width: '80%',
   },
 });
 

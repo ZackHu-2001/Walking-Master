@@ -75,14 +75,14 @@ const ImageList = ({
             setImageDetailVisible(true);
             setImageListVisible(false);
           }}>
-            <ActivityIndicator size={40} style={modalStyles.smallImageLoading} />
+            <ActivityIndicator color='#1C5D3A' size={40} style={modalStyles.smallImageLoading} />
             <Image source={{ uri: image.uri }} style={modalStyles.image} />
           </TouchableOpacity>
         })
       }
       <TouchableOpacity onPress={handleButtonPress} style={modalStyles.addButton}>
         {
-          isLoading ? <ActivityIndicator size={40} /> : <Ionicons name="add-outline" size={110} color="#999999" />
+          isLoading ? <ActivityIndicator color='#1C5D3A' size={40} /> : <Ionicons name="add-outline" size={110} color="#999999" />
         }
 
       </TouchableOpacity>

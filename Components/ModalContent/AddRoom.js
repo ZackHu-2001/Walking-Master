@@ -60,7 +60,7 @@ const AddRoom = ({ hideModal }) => {
         setRoomCode(code)
         }} placeholder="Paste journey code here"></TextInput>
       {
-        isLoading ? <ActivityIndicator style={{ marginTop: 10, height: 40 }} /> :
+        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginTop: 10, height: 40 }} /> :
         <Button style={{ marginTop: 10, height: 40 }} mode="contained" onPress={handleAddRoom}>Join Now!</Button>
       }
     </View>

@@ -146,7 +146,7 @@ const LocationSearchScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       {loading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator size="large" color="#4CAF50" />
+          <ActivityIndicator color='#1C5D3A' size="large" />
           <Text> {hint} </Text>
         </View>
       ) : (

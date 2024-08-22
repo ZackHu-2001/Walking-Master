@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
@@ -9,7 +9,7 @@ const GameCard = ({ title, onPress, size, onSwipeRight, editMode }) => {
         <Text style={styles.title}>{title}</Text>
         {
           editMode ? <TouchableOpacity style={styles.deleteButton} onPress={onSwipeRight}>
-            <Icon name="trash" size={30} color="#6750A4"  />
+            <Icon name="trash" size={30} color="#E57373"  />
           </TouchableOpacity> : <Text style={styles.description}>
             {size === 3 ? '3 X 3' : '4 X 3'}
           </Text>

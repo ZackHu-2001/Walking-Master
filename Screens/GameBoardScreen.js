@@ -41,6 +41,7 @@ export default function GameBoardScreen({ navigation }) {
     setEditMode(false);
     try {
       const updatedUser = await getUser(user.uid);
+      updatedUser.uid = user.uid;
       setUser(updatedUser);
     } catch (error) {
       console.error('Failed to update user:', error);
@@ -80,8 +81,18 @@ export default function GameBoardScreen({ navigation }) {
     );
   };
 
+  useEffect(() => {
+    if (!user) {
+      console.log("user === null")
+    } else {
+      console.log("user", user)
+    }
+  }, [user]);
+
   const removeGameFromUser = async (gameId) => {
     try {
+      console.log("user", user)
+      console.log('user uid', user.uid, 'gameId', gameId);
       await removeGame(user.uid, gameId);
       console.log(`Game ${gameId} removed from user collection`);
 
@@ -100,7 +111,10 @@ export default function GameBoardScreen({ navigation }) {
     const fetchGames = async () => {
       try {
         const userInfo = await getUser(user.uid);
-        if (!userInfo) return;
+        if (!userInfo) {
+          setIsLoading(false);
+          return;
+        }
 
         // Create a query for only the user's games
         const gamesCollection = collection(db, 'games');
@@ -179,7 +193,7 @@ export default function GameBoardScreen({ navigation }) {
 
       {isLoading ?
         <View style={styles.loading}>
-          <ActivityIndicator animating={isLoading} size='large' />
+          <ActivityIndicator color='#1C5D3A' animating={isLoading} size='large' />
           <Text style={{ fontSize: 20, marginTop: 10 }}>Loading...</Text>
         </View> :
         games.length === 0 ?

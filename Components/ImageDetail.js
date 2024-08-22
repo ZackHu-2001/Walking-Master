@@ -73,7 +73,7 @@ const ImageDetail = ({
     <View style={[modalStyles.detailImageContainer, focus && modalStyles.focus]}>
 
       <View style={modalStyles.detailImage} >
-        <ActivityIndicator size={60} style={modalStyles.largeImageLoading} />
+        <ActivityIndicator color='#1C5D3A' size={60} style={modalStyles.largeImageLoading} />
         <Image source={{
           uri: currentImage.uri
         }} style={modalStyles.detailImage} />
@@ -102,7 +102,7 @@ const ImageDetail = ({
       </TouchableOpacity>
 
       {
-        comments === null && <ActivityIndicator style={{ marginTop: 10 }} />
+        comments === null && <ActivityIndicator color='#1C5D3A' style={{ marginTop: 10 }} />
       }
       {
         comments !== null &&
@@ -133,7 +133,7 @@ const ImageDetail = ({
         value={comment}
       />
       {
-        isLoading ? <ActivityIndicator style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Add Comment</Button>
+        isLoading ? <ActivityIndicator color='#1C5D3A' style={{ marginBottom: -20, height: 40 }} /> : <Button style={[modalStyles.button, { marginBottom: -20, height: 40 }]} onPress={submit} >Add Comment</Button>
       }
     </View>
 
