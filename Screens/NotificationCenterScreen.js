@@ -124,11 +124,26 @@ const NotificationCenterScreen = () => {
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   };
 
+  const requestNotificationPermission = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        "Permission Required",
+        "You need to enable notifications in settings to use this feature."
+      );
+      return false;
+    }
+    return true;
+  };
+
   const scheduleNotification = async () => {
     if (!selectedGame) {
       Alert.alert("Error", "Please select a game to set up a notification.");
       return;
     }
+
+    const permissionGranted = await requestNotificationPermission();
+    if (!permissionGranted) return;
 
     const currentTime = new Date();
     const timeDifference = date.getTime() - currentTime.getTime();
