@@ -8,7 +8,6 @@ import Context from '../Context/context';
 const GOOGLE_PLACES_API_KEY = 'AIzaSyDylz4EXfCqB4riHXFWHsA2oiOnabLRx4M';
 const GOOGLE_PLACES_ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
-
 const getNearbyLocations = async (location) => {
   const { latitude, longitude } = location;
   const types = ['restaurant', 'cafe', 'store', 'park'];
@@ -115,25 +114,8 @@ const LocationSearchScreen = ({ navigation, route }) => {
     }
   };
 
-  // const handleSearch = async (text) => {
-  //   setSearchQuery(text);
-  //   if (text.length > 2) {
-  //     setLoading(true);
-  //     try {
-  //       const searchResults = await searchLocations(text, location);
-  //       console.log(searchResults)
-  //       setLocations(searchResults);
-  //     } catch (error) {
-  //       console.error('Error searching locations:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.locationItem} onPress={() => {
-      console.log("item", item);
       setSelected(item.id);
       setPickedLocation({
         name: item.name,
@@ -162,15 +144,6 @@ const LocationSearchScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-
-      {/* <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for a place nearby"
-          value={searchQuery}
-          onChangeText={handleSearch}
-        />
-      </View> */}
       {loading ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <ActivityIndicator size="large" color="#4CAF50" />

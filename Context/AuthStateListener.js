@@ -10,16 +10,11 @@ function AuthStateListener({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // setUser(user);
         getUser(user.uid).then((userInfo) => {
           setUser({
             ...userInfo,
             uid: user.uid,
           });
-          console.log('userInfo', {
-            ...userInfo,
-            uid: user.uid,
-          })
         });
       } else {
         setUser(null);

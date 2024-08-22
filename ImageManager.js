@@ -47,7 +47,6 @@ export const handleTakePhoto = async () => {
   });
 
   if (!result.canceled) {
-    console.log('result uri', result.assets[0].uri)
     return result.assets[0].uri;
   }
 };

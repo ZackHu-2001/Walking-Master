@@ -98,8 +98,6 @@ export const getComment = async (id) => {
 export const updateCommentThroughRef = async (commentRef, comments) => {
   try {
     await updateDoc(commentRef, comments);
-    console.log('comments',comments)
-    console.log("Document updated successfully!");
   } catch (error) {
     console.error("Error updating document:", error);
   }

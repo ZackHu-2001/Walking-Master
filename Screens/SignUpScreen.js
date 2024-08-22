@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/FirebaseSetup';
 import { Alert } from 'react-native';
@@ -11,6 +11,7 @@ const SignupScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
@@ -69,15 +70,6 @@ const SignupScreen = ({ navigation }) => {
       </View>
 
       <TouchableOpacity style={styles.button} onPress={async () => {
-        // if (password !== confirmPassword) {
-        //   alert('Passwords do not match');
-        //   return;
-        // }
-        // if (!email || !username || !password) {
-        //   alert('Please fill all fields');
-        //   return;
-        // }
-
         if (email === "" || password === "" || username === "") {
           Alert.alert("Error", "Email, username, and password are required!");
           return;
@@ -99,6 +91,7 @@ const SignupScreen = ({ navigation }) => {
           return;
         }
 
+        setIsLoading(true);
         try {
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const newUser = {
@@ -110,27 +103,16 @@ const SignupScreen = ({ navigation }) => {
           addUser(userCredential.user.uid, newUser)
 
           Alert.alert("Success", "User registered successfully");
-          // navigation.replace("Login");
         } catch (error) {
           Alert.alert("Error", error.message);
           console.log(error);
+        } finally {
+          setIsLoading(false);
         }
-
-        // createUserWithEmailAndPassword(auth, email, password)
-        //   .then((userCredential) => {
-        //     // Signed in
-        //     const user = userCredential.user;
-        //     // Here you would typically save the username to your database
-        //     // For example: saveUsernameToDB(user.uid, username);
-        //   })
-        //   .catch((error) => {
-        //     const errorCode = error.code;
-        //     const errorMessage = error.message;
-        //     console.log('Error:', errorCode, errorMessage);
-        //     alert(errorMessage);
-        //   });
       }}>
-        <Text style={styles.buttonText}>Register</Text>
+        {
+          isLoading ? <ActivityIndicator /> : <Text style={styles.buttonText}>Register</Text>
+        }
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.replace('Login')}>

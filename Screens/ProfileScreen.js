@@ -33,7 +33,6 @@ const ProfileScreen = () => {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log('User data fetched:', userData);
         setUsername(userData.username || '');
         setAvatarUri(userData.avatarUrl || null); // Set avatarUri based on the fetched data
       } else {
@@ -48,19 +47,19 @@ const ProfileScreen = () => {
 
   const uploadImageAsync = async (uri, path) => {
     try {
-      console.log('Attempting to upload image from URI:', uri); 
+      console.log('Attempting to upload image from URI:', uri);
       const storage = getStorage();
       const storageRef = ref(storage, path);
-  
+
       const response = await fetch(uri);
       console.log('Fetch response:', response);
       const blob = await response.blob();
       console.log('Blob created:', blob);
-  
+
       console.log('Uploading image...');
       await uploadBytes(storageRef, blob);
       console.log('Image uploaded to storage');
-  
+
       const downloadUrl = await getDownloadURL(storageRef);
       console.log('Download URL:', downloadUrl);
       return downloadUrl;
@@ -69,7 +68,7 @@ const ProfileScreen = () => {
       Alert.alert('Upload Error', error.message);
       return null;
     }
-  };  
+  };
 
   const handleAvatarPress = async () => {
     Alert.alert(
@@ -104,12 +103,12 @@ const ProfileScreen = () => {
         [{ resize: { width: 800 } }],
         { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
       );
-  
+
       console.log('Processing image with URI:', manipulatedImage.uri);
       const uploadedUrl = await uploadImageAsync(manipulatedImage.uri, `avatars/${user.uid}`);
       if (uploadedUrl) {
         setAvatarUri(uploadedUrl);
-  
+
         try {
           if (user?.uid) {
             await updateDoc(doc(db, 'users', user.uid), { avatarUrl: uploadedUrl });
@@ -213,19 +212,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatar: {
-    width: 150, 
-    height: 150, 
+    width: 150,
+    height: 150,
     borderRadius: 75, // Half of the width/height to make it circular
     marginBottom: 10,
   },
   avatarIcon: {
-    backgroundColor: '#e0e0e0', 
+    backgroundColor: '#e0e0e0',
     marginBottom: 10,
   },
   cameraIconContainer: {
     position: 'absolute',
-    bottom: 10, 
-    right: 10, 
+    bottom: 10,
+    right: 10,
   },
   cameraIcon: {
     backgroundColor: '#fff',
