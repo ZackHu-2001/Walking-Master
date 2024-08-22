@@ -37,6 +37,12 @@ const NotificationCenterScreen = () => {
           Alert.alert("No Games", "No games were found for this user.");
           return;
         }
+
+        const gamesQuery = query(
+          collection(db, "games"),
+          where('__name__', 'in', user.games) // '__name__' is a special field for document ID
+        );
+
         const gamesSnapshot = await getDocs(gamesQuery);
 
         if (gamesSnapshot.empty) {
