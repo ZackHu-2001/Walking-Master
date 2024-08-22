@@ -14,7 +14,7 @@ const ThemeCard = ({ theme, setTheme, selected }) => {
       <Image source={{
         uri: theme
       }} style={{ height: 180, width: 90, marginLeft: 10, marginRight: 10 }} />
-      <Checkbox status={selected ? 'checked' : 'unchecked'} />
+      <Checkbox color='#1C5D3A' status={selected ? 'checked' : 'unchecked'} />
     </TouchableOpacity>
   );
 }
@@ -111,6 +111,7 @@ const NewGame = ({ hideModal, navigateToGame }) => {
         isLoading ?
           <ActivityIndicator animating={isLoading} style={{ height: 40 }} /> :
           <Button style={{ height: 40 }}
+            textColor='#1C5D3A'
             onPress={async () => {
               setIsLoading(true);
               const gameId = await createNewGame(size, theme, user.uid);
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   selected: {
-    backgroundColor: '#909090'
+    backgroundColor: '#D3E4CD'
   }
 });
 

@@ -33,11 +33,10 @@ const NotificationCenterScreen = () => {
   const fetchUserGames = async () => {
     if (user && user.uid) {
       try {
-
-        const gamesQuery = query(
-          collection(db, "games"),
-          where('__name__', 'in', user.games) // '__name__' is a special field for document ID
-        );
+        if (!user.games || user.games.length === 0) {
+          Alert.alert("No Games", "No games were found for this user.");
+          return;
+        }
         const gamesSnapshot = await getDocs(gamesQuery);
 
         if (gamesSnapshot.empty) {

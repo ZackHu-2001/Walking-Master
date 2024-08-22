@@ -30,7 +30,7 @@ export const updateGame = async (id, game) => {
   return await updateDoc(doc(db, "games", id), game);
 }
 
-export const checkGameExists = async (id, uid) => {
+export const checkGameAdded = async (uid, id) => {
   const userDoc = await getDoc(doc(db, 'users', uid));
   if (!userDoc.exists()) {
     console.log('No such user document!');
@@ -38,6 +38,11 @@ export const checkGameExists = async (id, uid) => {
   }
   const userData = userDoc.data();
   return userData.games.includes(id);
+}
+
+export const checkGameExists = async (id) => {
+  const gameDoc = await getDoc(doc(db, 'games', id));
+  return gameDoc.exists();
 }
 
 // export const listenForGames = (ids = [], callback) => {
@@ -98,8 +103,6 @@ export const getComment = async (id) => {
 export const updateCommentThroughRef = async (commentRef, comments) => {
   try {
     await updateDoc(commentRef, comments);
-    console.log('comments',comments)
-    console.log("Document updated successfully!");
   } catch (error) {
     console.error("Error updating document:", error);
   }

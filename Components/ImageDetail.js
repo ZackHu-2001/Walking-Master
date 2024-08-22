@@ -12,7 +12,6 @@ const Comment = ({ content, creater, orientation }) => {
   useEffect(() => {
     const fetchCreaterInfo = async () => {
       const createrInfo = await getUser(creater)
-      console.log(createrInfo)
       setCreaterInfo(createrInfo)
     }
     fetchCreaterInfo()
@@ -45,7 +44,6 @@ const ImageDetail = ({
   const { user } = useContext(Context)
 
   useEffect(() => {
-    console.log("current image", currentImage)
     const fetchComments = async () => {
       const data = await getCommentThroughRef(currentImage.comment)
       if (data) {

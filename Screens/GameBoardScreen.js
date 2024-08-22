@@ -185,7 +185,7 @@ export default function GameBoardScreen({ navigation }) {
         games.length === 0 ?
           <View style={styles.loading}>
             <Image style={{ width: 200, height: 150 }} source={require('../assets/emptyHint.png')}/>
-            <Text style={{ fontSize: 20, marginTop: 20 }}>Your Journey Begins Here!</Text>
+            <Text style={{ color: '#1C5D3A', fontSize: 20, marginTop: 20 }}>Your Journey Begins Here!</Text>
           </View> :
           <ScrollView refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

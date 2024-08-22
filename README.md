@@ -4,16 +4,15 @@
 Hanzhang Peng, Zixiang Hu
 
 ### Functionalities added in this iteration:
- - Authentication
-    - Support login, logout, signup, findback password
-    - User could only see its own created content(game).
-- Camera Use
-    - Permissions are required when first use it.
-    - Support chose image from lib or take image, then upload to server and display locally.
-- Notification use
-    - User could schedule local notification
+- Location use
+    - When user upload their image, they could set location to denote where they snapped the images.
+    - When checking other people's uploaded image, they could click the map icon to view its location. Besides, they could check nearby parks through clikcing nearbyPark button.
 
-## Note: We did not achieved authentication through rules, but through validation with in the program, only userid matched with the provided would display the relevant content.
+
+- External API use
+    - The external api used is google nearby search api.
+    - User could set its location through picking nearby location.
+
 ### FireStore Rules
 ```
 rules_version = '2';
@@ -31,7 +30,8 @@ service cloud.firestore {
     // all client requests to your Firestore database will be denied until you Update
     // your rules
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2024, 9, 5);
+      allow read: if true;
+      allow write, update, delete: if request.auth != null;
     }
   }
 }
@@ -57,7 +57,8 @@ service firebase.storage {
     // all client requests to your Storage bucket will be denied until you Update
     // your rules
     match /{allPaths=**} {
-      allow read, write: if request.time < timestamp.date(2024, 9, 5);
+      allow read: if true;
+      allow write, update, delete: if request.auth != null;
     }
   }
 }
@@ -69,7 +70,7 @@ Hanzhang Peng:
 - Profile screen
 - Notification screen
 - CustomButton
-- Bottom navigator
+- Bottom Navigator
 
 Zixiang Hu:
 - Game screen
@@ -78,6 +79,7 @@ Zixiang Hu:
 - Tile
 - Modal
 - GameCard
+- Floating Action Button
 
 ### Data Model & Collection
 ![data modal](/assets/dataModel.png)
@@ -87,20 +89,9 @@ For each of the collection, there are three basic CRUD operation, create, read a
 Delete is only supported for the game collection. Furthermore, for game colleciton, we had an extra function that keeps listening its update. The detailed implementation could be found from firestoreHelper.js.
 
 ## Screen shots
+Main page
+![main page](assets/1991724303807_.pic.jpg)
 
-![](/assets/IMG_7663.PNG)
-![](/assets/IMG_7664.PNG)
-![](/assets/IMG_7665.PNG)
-![](/assets/IMG_7662.PNG)
-![](/assets/IMG_7660.PNG)
-![](/assets/IMG_7661.PNG)
-![](/assets/IMG_7658.PNG)
+Add game page
+![Add game page](assets/2011724303811_.pic.jpg)
 
-![](/assets/IMG_7657.PNG)
-![](/assets/IMG_7656.PNG)
-
-![](/assets/IMG_7666.PNG)
-
-
-## Note:
-It is possible to unable create new game, due to some authentication issue(because we are downloding image from other source). If you met that, don't hesitate to contact me, and I would help you out.

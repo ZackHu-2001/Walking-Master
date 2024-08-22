@@ -4,7 +4,7 @@ import { Button, ActivityIndicator } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { useContext } from "react";
 import Context from "../../Context/context";
-import { checkGameExists, updateUser, getUser } from "../../Firebase/firestoreHelper";
+import { checkGameExists, updateUser, getUser, checkGameAdded } from "../../Firebase/firestoreHelper";
 
 const AddRoom = ({ hideModal }) => {
   const [roomCode, setRoomCode] = useState('');
@@ -19,20 +19,21 @@ const AddRoom = ({ hideModal }) => {
 
     setIsLoading(true);
     // check if the room exists
-    let exist = await checkGameExists(roomCode, user.uid);
+    let exist = await checkGameExists(roomCode);
     if (!exist) {
       Alert.alert("Error", "Journey does not exist");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
-
-    if (user.games.includes(roomCode)) {
+    let added = await checkGameAdded(user.uid, roomCode);
+    if (added) {
       Alert.alert("Error", "Journey already added");
       setRoomCode('');
       setIsLoading(false);
       return;
     }
+
     // add the room to the user's room list
     const updatedUser = {
       ...user,
