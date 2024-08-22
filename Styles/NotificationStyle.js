@@ -18,7 +18,7 @@ export default styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
       textAlign: 'center',
-      color: '#6A4C9C',
+      color: '#2D6D4B',
     },
     dropdownContainer: {
       marginBottom: 60,
@@ -27,27 +27,27 @@ export default styles = StyleSheet.create({
     },
     dropdown: {
       backgroundColor: '#ffffff',
-      borderColor: '#7B90D2',
+      borderColor: '#20604F',
     },
     dropdownContainerStyle: {
-      backgroundColor: '#e5e5ff',  // for the dropdown list
+      backgroundColor: '#A8D8B9',  // for the dropdown list
     },
     textStyle: {
-      color: '#333333',
+      color: '#36563C',
       fontSize: 16,
       fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto',
     },
     placeholderStyle: {
-      color: '#999999', 
+      color: '#ffffff', 
       fontSize: 16,
     },
     labelStyle: {
-      color: '#4E4F97', 
+      color: '#00896C', 
       fontSize: 16,
       fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto', 
     },
     selectedItemLabelStyle: {
-      color: '#6A4C9C',
+      color: '#096148',
       fontWeight: 'bold',
       fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto',
     },
@@ -67,7 +67,7 @@ export default styles = StyleSheet.create({
       marginBottom: 10,
     },
     button: {
-      backgroundColor: '#6A4C9C', 
+      backgroundColor: '#1C5D3A', 
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 25, 
@@ -89,7 +89,7 @@ export default styles = StyleSheet.create({
       weights: 'bold',
     },    
     confirmButton: {
-      backgroundColor: '#993399',  
+      backgroundColor: '#00896C',  
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 25, 
