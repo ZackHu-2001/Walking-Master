@@ -38,7 +38,7 @@ export default styles = StyleSheet.create({
       fontFamily: Platform.OS === 'ios' ? 'Helvetica' : 'Roboto',
     },
     placeholderStyle: {
-      color: '#ffffff', 
+      color: '#1C5D3A', 
       fontSize: 16,
     },
     labelStyle: {
