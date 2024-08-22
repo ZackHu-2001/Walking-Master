@@ -1,5 +1,8 @@
 # Walking-Master
 
+## Demo Video
+https://youtu.be/Mac18-CPAWQ
+
 ## Team member:
 Hanzhang Peng, Zixiang Hu
 
